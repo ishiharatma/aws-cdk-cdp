@@ -8,9 +8,9 @@ const defaultEnv = {
 };
 
 // environment identifier
-const projectName: string = 'unittest';
-const envName: string = 'test';
-const vpcCIDR: string = '10.0.0.0/16';
+const projectName = 'unittest';
+const envName = 'test';
+const vpcCIDR = '10.0.0.0/16';
 test('case1: normal', () => {
     // GIVEN
     const app = new App({

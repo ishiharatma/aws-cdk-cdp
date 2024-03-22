@@ -1,0 +1,16 @@
+PJName: "sample"
+EnvName: "prod"
+Description: |-
+  本番環境用の設定ファイルです。
+  foo
+  bar
+  baz
+MyVPC:
+  CIDR: '10.1.0.0/16'
+  MaxAzs: 2
+  Natgateways: 0
+  IsNatInstance: false
+  NatInstanceType: 't3a.micro'
+  PublicSubnetMask: '/24'
+  PrivateSubnetMask: '/24'
+  IsolatedSubnetMask: '/24'
