@@ -1,25 +1,29 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { MyVpcStack } from '../lib/vpc-with-nat-ami-al1-stack';
+import { CloudFrontS3OacStack } from '../lib/cloudfront-s3-oac-stack';
 
 const app = new cdk.App();
 
 // environment identifier
-const envName: string = app.node.tryGetContext('env');
 const projectName: string = app.node.tryGetContext('project');
-
+const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
-  };
-  
-const useast1Env = {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "us-east-1",
-  };
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
 
+const useast1Env = {
+// US East (Virginia)
+account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: "us-east-1",
+};
+const uswest2Env = {
+// US West (Oregon)
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: "us-east-1",
+};
 // Whether to force delete an S3 bucket even if objects exist
 // Determine by environment identifier
 //const isAutoDeleteObject:boolean = envName.match(/^(dev|test|stage)$/) ? true: false;
@@ -31,14 +35,12 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new MyVpcStack(app, `VPCWithNATStack-${projectName}-${envName}`, {
-    pjName: projectName,
-    envName: envName,
-    vpcCIDR: '10.0.0.0/16',
-    isAutoDeleteObject: isAutoDeleteObject,
-    description: 'VPC with NAT instances using Amazon Linux 1 AMI',
-    env: defaultEnv,
-    terminationProtection: isTerminationProtection, // Enabling deletion protection
+new CloudFrontS3OacStack(app, 'CloudFrontS3OacStack', {
+  pjName: projectName,
+  envName: envName,
+  description: 'Deliver S3 static website using OAC with CloudFront',
+  isAutoDeleteObject: isAutoDeleteObject,
+  env: defaultEnv,
 });
 
 // --------------------------------- Tagging  -------------------------------------

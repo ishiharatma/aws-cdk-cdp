@@ -36,6 +36,7 @@ new MyVpcStack(app, `VPCWithNATStack-${projectName}-${envName}`, {
     envName: envName,
     vpcCIDR: '10.0.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
+    description: 'VPC with custom NAT instance',
     env: defaultEnv,
     terminationProtection: isTerminationProtection, // Enabling deletion protection
 });

@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { IYamlProps, loadConfig} from '../lib/utils/load-config';
+import {COLORS} from '../../common/constants';
 
 const app = new cdk.App();
 
@@ -27,12 +28,12 @@ const defaultEnv = {
 const useast1Env = {
   // US East (Virginia)
   account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "us-east-1",
+  region: "us-east-1",
 };
 const uswest2Env = {
   // US West (Oregon)
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "us-east-1",
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: "us-east-1",
 };
 
 // 環境別設定ファイルの読み込み
@@ -40,9 +41,9 @@ const envVals: IYamlProps = loadConfig(`./parameters/${projectName}-${envName}.y
 
 const isProduction:boolean = envName.match(/^(prod|jump)$/) ? true: false;
 if (isProduction) {
-  console.log(`${color_red}!!!!!!!!!! CAUTION !!!!!!!!!!${color_reset}`);
-  console.log(`${color_red}   本番環境へのリリースです。${color_reset}`);
-  console.log(`${color_red}!!!!!!!!!! CAUTION !!!!!!!!!!${color_reset}`);
+  console.log(`${COLORS.color_red}!!!!!!!!!! CAUTION !!!!!!!!!!${COLORS.color_reset}`);
+  console.log(`${COLORS.color_red}   本番環境へのリリースです。${COLORS.color_reset}`);
+  console.log(`${COLORS.color_red}!!!!!!!!!! CAUTION !!!!!!!!!!${COLORS.color_reset}`);
 };
 
 console.log('JSON全て出力')

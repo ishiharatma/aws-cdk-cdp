@@ -36,6 +36,7 @@ new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
     envName: envName,
     vpcCIDR: '10.1.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
+    description: 'VPC for NAT Gateway',
     env: defaultEnv,
     terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
