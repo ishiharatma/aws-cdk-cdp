@@ -10,6 +10,7 @@ cd usecases\sample
 rm package.json
 cdk init app --language typescript
 cd ../../
+cp tsconfig_usecases.json .\usecases\sample\tsconfig.json
 npm install -w usecases\sample --save aws-cdk-lib constructs
 ```
 
@@ -19,6 +20,7 @@ cd usecases\sample
 del package.json
 cdk init app --language typescript
 cd ../../
+copy /y tsconfig_usecases.json .\usecases\sample\tsconfig.json
 npm install -w usecases\sample --save aws-cdk-lib constructs
 npm install -w usecases\sample --save-dev @types/js-yaml
 ```
