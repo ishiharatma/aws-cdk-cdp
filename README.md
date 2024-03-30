@@ -4,6 +4,8 @@ This is a sample repository of cloud design patterns on AWS CDK.
 
 ## Add usecase
 
+- linux
+
 ```sh
 npm init -w usecases\sample
 cd usecases\sample
@@ -13,6 +15,8 @@ cd ../../
 cp tsconfig_usecases.json .\usecases\sample\tsconfig.json
 npm install -w usecases\sample --save aws-cdk-lib constructs
 ```
+
+- Windows
 
 ```bat
 npm init -w usecases\sample
@@ -27,10 +31,25 @@ npm install -w usecases\sample --save-dev @types/js-yaml
 
 ## Samples
 
+### Uncategorized
+
 - env-parameter
+
+### VPC
+
 - vpc-with-nat-ami-al1
+
   ![](usecases/vpc-with-nat-ami-al1/overview.png)
+
 - vpc-with-nat
+
   ![](usecases/vpc-with-nat/overview.png)
+
 - vpc-with-natgw
+
   ![](usecases/vpc-with-natgw/overview.png)
+
+### CloudFront
+
+- cloudfront-s3-oai (Legacy)
+- cloudfront-s3-oac
