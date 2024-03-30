@@ -7,7 +7,6 @@ import { CloudFrontOACConstruct } from '../../common/lib/construct-cloudfront-oa
 import * as path from 'path';
 import {aws_s3 as s3} from 'aws-cdk-lib';
 
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 interface CloudfrontS3OacStackProps extends StackProps {
   readonly pjName: string;
   readonly envName: string;
@@ -45,24 +44,6 @@ export class CloudFrontS3OacStack extends cdk.Stack {
       bucketSuffix: 'cloudfront-accesslogs-oac',
       isAutoDeleteObject: props.isAutoDeleteObject,
       accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
-      lifecycleRules: [
-        {
-          expirationDays: 90,
-          abortIncompleteMultipartUploadAfterDays: 7
-        }
-      ]
-    });
-    // バケットは 'aws-waf-logs-'で始まる必要がある。
-    // see: https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/logging-s3.html
-    const wafLogsBucket = new BucketConstruct(this,'WAFLogsBucket',{
-      pjName: props.pjName,
-      envName: props.envName,
-      bucketPrefix: 'aws-waf-logs-oac',
-      bucketSuffix: '',
-      isAutoDeleteObject: props.isAutoDeleteObject,
-      accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
-      s3ServerAccessLogBucketConstruct: websiteAccessLogsBucket,
-      logFilePrefix: '',
       lifecycleRules: [
         {
           expirationDays: 90,
