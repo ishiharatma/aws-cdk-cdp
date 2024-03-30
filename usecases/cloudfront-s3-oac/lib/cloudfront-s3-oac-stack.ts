@@ -61,6 +61,7 @@ export class CloudFrontS3OacStack extends cdk.Stack {
       s3ServerAccessLogBucketConstruct: websiteAccessLogsBucket,
       logFilePrefix: '',
     });
+
     // CloudFront
     const cloudFront = new CloudFrontOACConstruct(this, 'CloudFrontOAC',{
       pjName: props.pjName,
