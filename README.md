@@ -7,26 +7,28 @@ This is a sample repository of cloud design patterns on AWS CDK.
 - linux
 
 ```sh
-npm init -w usecases\sample
-cd usecases\sample
+usecase_name=sample
+npm init -w usecases\${usecase_name}
+cd usecases\${usecase_name}
 rm package.json
 cdk init app --language typescript
 cd ../../
-cp tsconfig_usecases.json .\usecases\sample\tsconfig.json
-npm install -w usecases\sample --save aws-cdk-lib constructs
+cp tsconfig_usecases.json .\usecases\${usecase_name}\tsconfig.json
+npm install -w usecases\${usecase_name} --save aws-cdk-lib constructs
 ```
 
 - Windows
 
 ```bat
-npm init -w usecases\sample
-cd usecases\sample
+SET usecase_name=sample
+npm init -w usecases\%usecase_name%
+cd usecases\%usecase_name%
 del package.json
 cdk init app --language typescript
 cd ../../
-copy /y tsconfig_usecases.json .\usecases\sample\tsconfig.json
-npm install -w usecases\sample --save aws-cdk-lib constructs
-npm install -w usecases\sample --save-dev @types/js-yaml
+copy /y tsconfig_usecases.json .\usecases\%usecase_name%\tsconfig.json
+npm install -w usecases\%usecase_name% --save aws-cdk-lib constructs
+npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
 ```
 
 ## Samples
@@ -38,18 +40,19 @@ npm install -w usecases\sample --save-dev @types/js-yaml
 ### VPC
 
 - vpc-with-nat-ami-al1
-
-  ![](usecases/vpc-with-nat-ami-al1/overview.png)
-
 - vpc-with-nat
-
-  ![](usecases/vpc-with-nat/overview.png)
-
 - vpc-with-natgw
 
-  ![](usecases/vpc-with-natgw/overview.png)
+### Static Web Site
 
-### CloudFront
+- s3-static-web-site
+
+### Web Application
 
 - cloudfront-s3-oai (Legacy)
 - cloudfront-s3-oac
+- cloudfront-s3-oac-apigw-lambda
+
+### CI/CD
+
+TODO
