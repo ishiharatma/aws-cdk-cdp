@@ -7,12 +7,12 @@ import {
 import { BucketConstruct } from './construct-bucket';
 import { listOfWAFRules } from '../interface/index';
 
-interface ACMProps {
+interface WAFProps {
   readonly pjName: string;
   readonly envName: string;
   readonly webACLNameSuffix: string;
-  readonly domainName: string;
-  readonly hostedZoneId: string;
+  //readonly domainName: string;
+  //readonly hostedZoneId: string;
   /**
    * @default - false
    */
@@ -25,16 +25,32 @@ interface ACMProps {
    * @default - false
    */
   readonly enableWhitelist?: boolean;
-  readonly logsBucket?: BucketConstruct;
+  /**
+   * @default - false
+   */
+  readonly enableS3Log?: Boolean;
+  /**
+   * @default - 365 Days
+   */
   readonly S3LogsBucketExpirationDays?: number;
-  readonly S3LogsBucketIADays?: number;
+  /**
+   * @default - 30 Days
+   */
+  //readonly S3LogsBucketIADays?: number;
+  /**
+   * @default - 90 Days
+   */
   readonly S3LogsBucketArchiveDays?: number;
+  /**
+   * @default - false
+   */
   readonly isAutoDeleteObject?: boolean;
 }
+
 export class WAFv2Construct extends Construct {
   public readonly webACL: wafv2.CfnWebACL;
 
-  constructor(scope: Construct, id: string, props: ACMProps) {
+  constructor(scope: Construct, id: string, props: WAFProps) {
     super(scope, id);
 
     const accountId = cdk.Stack.of(this).account;
@@ -341,9 +357,30 @@ export class WAFv2Construct extends Construct {
         rules: webACLRules,
     });
 
-    if (props.logsBucket) {
-    // S3への直接保存用
-      props.logsBucket.bucket.addLifecycleRule({
+    if (props.enableS3Log) {
+      // バケットは 'aws-waf-logs-'で始まる必要がある。
+      // see: https://docs.aws.amazon.com/ja_jp/waf/latest/developerguide/logging-s3.html
+      const wafLogsBucket = new BucketConstruct(this,'WAFLogsBucket',{
+        pjName: props.pjName,
+        envName: props.envName,
+        bucketPrefix: 'aws-waf-logs',
+        bucketSuffix: '',
+        isAutoDeleteObject: props.isAutoDeleteObject,
+        accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
+        lifecycleRules: [
+          {
+            expirationDays: 90,
+            abortIncompleteMultipartUploadAfterDays: 7
+          }
+        ]
+      });
+      new cdk.CfnOutput(this, "wafLogS3BucketName", {
+          value: wafLogsBucket.bucket.bucketName,
+          description: "WAF Log S3Bucket name.",
+          //exportName: "WafLogS3BucketName"
+      });
+      // Lifecycle
+      wafLogsBucket.bucket.addLifecycleRule({
           expiration: cdk.Duration.days(props.S3LogsBucketExpirationDays ?? 365),
           abortIncompleteMultipartUploadAfter: cdk.Duration.days(7), // 不完全なマルチパートアップロードの削除
           transitions: [
@@ -351,10 +388,12 @@ export class WAFv2Construct extends Construct {
                 storageClass: s3.StorageClass.INTELLIGENT_TIERING, // (S3 標準 – IT)
                 transitionAfter: cdk.Duration.days(0),
             },
+          /*
           {
               storageClass: s3.StorageClass.INFREQUENT_ACCESS, // 低頻度アクセス (S3 標準 – IA)
               transitionAfter: cdk.Duration.days(props.S3LogsBucketIADays ?? 30),
           },
+          */
           {
               storageClass: s3.StorageClass.GLACIER, // S3 Glacier Flexible Retrieval (旧 S3 Glacier)
               transitionAfter: cdk.Duration.days(props.S3LogsBucketArchiveDays ?? 90),
@@ -366,12 +405,12 @@ export class WAFv2Construct extends Construct {
         this,
         "wafv2LoggingConfiguration",
         {
-          logDestinationConfigs: [props.logsBucket.bucket.bucketArn],
+          logDestinationConfigs: [wafLogsBucket.bucket.bucketArn],
           resourceArn: this.webACL.attrArn,
         }
       );
       logConfig.addDependency(this.webACL);
-      logConfig.addDependency(props.logsBucket.bucket.node.defaultChild as cdk.CfnResource);
+      logConfig.addDependency(wafLogsBucket.bucket.node.defaultChild as cdk.CfnResource);
     }
     new cdk.CfnOutput(this, "wafAclCloudFrontArn", {
         value: this.webACL.attrArn,

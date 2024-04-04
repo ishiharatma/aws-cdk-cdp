@@ -1,17 +1,32 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as CloudfrontS3Oai from '../lib/cloudfront-s3-oai-stack';
+import { App, Stack } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import {CloudFrontS3OaiStack} from '../lib/cloudfront-s3-oai-stack';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/cloudfront-s3-oai-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new CloudfrontS3Oai.CloudfrontS3OaiStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+const projectName = 'unittest';
+const envName = 'test';
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+const defaultEnv = {
+    account: '123456789012',
+    region: 'ap-northeast-1',
+};
+
+test('Case1', () => {
+    // GIVEN
+    const app = new App({
+        context : {}
+    });
+    const stack = new CloudFrontS3OaiStack(app, 'S3StaticWebSiteStack', {
+        pjName: projectName,
+        envName: envName,
+        description: 'Deliver S3 static website using OAI(Legacy) with CloudFront',
+        isAutoDeleteObject: true,
+        env: defaultEnv,
+      });
+    // WHEN
+    const template = Template.fromStack(stack);
+    // THEN
+    template.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    // OAI
+    template.resourceCountIs('AWS::CloudFront::CloudFrontOriginAccessIdentity',1);
+
 });

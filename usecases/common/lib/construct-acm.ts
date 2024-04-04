@@ -10,6 +10,7 @@ interface ACMProps {
   readonly envName: string;
   readonly domainName: string;
   readonly hostedZoneId: string;
+  readonly certificateArn?:string;
 }
 export class ACMConstruct extends Construct {
   public readonly certificate: acm.ICertificate;
@@ -19,28 +20,33 @@ export class ACMConstruct extends Construct {
 
     const accountId = cdk.Stack.of(this).account;
     const region = cdk.Stack.of(this).region;
-    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'hostedZone', {
-      zoneName: props.domainName,
-      hostedZoneId: props.hostedZoneId
-    });
-    
-    /* deprecated
-    this.certificate = new acm.DnsValidatedCertificate(this, 'certificate', {
-      domainName: props.domainName,
-      subjectAlternativeNames: [
-        "*." + props.domainName
-      ],
-      hostedZone: hostedZone,
-      validation: acm.CertificateValidation.fromDns(hostedZone)
-    });
-    */
-    this.certificate = new acm.Certificate(this, 'certificate', {
-      domainName: props.domainName,
-      subjectAlternativeNames: [
-        "*." + props.domainName
-      ],
-      validation: acm.CertificateValidation.fromDns(hostedZone)
-    });
+
+    if (props.certificateArn) {
+      this.certificate = acm.Certificate.fromCertificateArn(this,'Certificate', props.certificateArn);
+    } else if (props.domainName) {
+      const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
+        zoneName: props.domainName,
+        hostedZoneId: props.hostedZoneId
+      });
+      
+      /* deprecated
+      this.certificate = new acm.DnsValidatedCertificate(this, 'certificate', {
+        domainName: props.domainName,
+        subjectAlternativeNames: [
+          "*." + props.domainName
+        ],
+        hostedZone: hostedZone,
+        validation: acm.CertificateValidation.fromDns(hostedZone)
+      });
+      */
+      this.certificate = new acm.Certificate(this, 'Certificate', {
+        domainName: props.domainName,
+        subjectAlternativeNames: [
+          "*." + props.domainName
+        ],
+        validation: acm.CertificateValidation.fromDns(hostedZone)
+      });  
+    }
 
   }
 }
