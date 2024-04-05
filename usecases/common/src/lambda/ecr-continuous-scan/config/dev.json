@@ -1,0 +1,18 @@
+[
+	{
+		"region": "ap-northeast-1",
+		"registry": "123456789012"
+		"repository": "foo/bar",
+		"tags": [
+			"latest"
+		]
+	},
+	{
+		"region": "ap-northeast-1",
+		"registry": "123456789012",
+		"repository": "fuga/hoge",
+		"tags": [
+			"latest"
+		]
+	}
+]
