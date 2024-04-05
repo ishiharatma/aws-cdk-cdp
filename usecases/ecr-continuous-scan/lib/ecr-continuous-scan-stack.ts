@@ -152,6 +152,7 @@ export class EcrContinuousScanStack extends cdk.Stack {
       envName: props.input.envName,
       bucketPrefix: ['ecr','continuous','scan','config'].join('.') ,
       contentsPath: path.join(__dirname, `../parameters/${props.input.envName}`),
+      isAutoDeleteObject: props.input.isAutoDeleteObject,
     });
     // スキャン定義ファイル
     // 動的に作成する場合は上記contentsPathを使わずに下記
