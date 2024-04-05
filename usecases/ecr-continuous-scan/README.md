@@ -1,14 +1,7 @@
-# Welcome to your CDK TypeScript project
+# ECR Continuous Scan
 
-This is a blank project for CDK development with TypeScript.
+Scans container images existing in ECR according to a schedule and notifies you of the results.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+ECRに存在するコンテナイメージをスケジュールに従ってスキャンを実行し、結果を通知します。
 
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+![overview](overview.png)

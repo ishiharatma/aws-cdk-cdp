@@ -27,6 +27,9 @@ interface S3BucketProps {
     readonly accessControl?: s3.BucketAccessControl;
     readonly isPublicReadAccess?: boolean;
     readonly isStaticWebSite?: boolean;
+    /**
+     * path.join(__dirname, './path/to/foo'),
+     */
     readonly contentsPath?: string;
 }
 

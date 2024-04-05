@@ -1,7 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
+import { StackProps } from 'aws-cdk-lib';
 import {
   aws_iam as iam,
-  aws_lamnda as lambda,
+  aws_lambda as lambda,
   aws_s3_deployment as s3deploy,
   aws_logs_destinations as logsdedestinations,
   aws_events as events,
@@ -12,17 +13,24 @@ import { Construct } from 'constructs';
 import * as path from 'path';
 import { BucketConstruct } from '../../common/lib/construct-bucket';
 
+import * as interfaceDef from '../../common/interface/index';
+
+interface EcrContinuousScanStackProps extends StackProps {
+  input: interfaceDef.EcrContinuousScanStackProps;
+}
 export class EcrContinuousScanStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: EcrContinuousScanStackProps) {
     super(scope, id, props);
     const accountId:string = cdk.Stack.of(this).account;
     const region:string = cdk.Stack.of(this).region;
+    const defaultLambdaLogLevel:string = 'INFO';
+    const defaultLambdaTimeoutSeconds:number = 30;
     const ecrScanLambdaSrcPath:string = '../../common/src/lambda/ecr-scan-notification/python';
     const ecrContinuousScanSrcPath:string = '../../common/src/lambda/ecr-continuous-scan/python';
     const cWLambdaErrorSubscriptionFilterLambdaFunctionPath:string = '../../common/src/lambda/cloudwatch-lambda-error-subscriptionfilter/python';
     // サブスクリプションフィルター
     const cWLambdaErrorSubscriptionFilterLambdaRole = new iam.Role(this, 'CWLambdaErrorSubscriptionFilterLambdaRole',{
-      roleName: ['@role', 'lambda', props.pjName, props.envName, 'ecrscan', 'subscriptionfilter'].join('-'),
+      roleName: ['@role', 'lambda', props.input.pjName, props.input.envName, 'ecrscan', 'subscriptionfilter'].join('-'),
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
@@ -45,19 +53,19 @@ export class EcrContinuousScanStack extends cdk.Stack {
       this,
       'cWLambdaErrorSubscriptionFilterLambdaFunction',
       {
-        functionName: `${props.pjName}-${props.envName}-ecrscan-cw-subscriptionfilter`,
+        functionName: `${props.input.pjName}-${props.input.envName}-ecrscan-cw-subscriptionfilter`,
         code: lambda.Code.fromAsset(
           path.join(__dirname, cWLambdaErrorSubscriptionFilterLambdaFunctionPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: lambda.Runtime.PYTHON_3_9,
-        timeout: cdk.Duration.seconds(30),
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
+        timeout: cdk.Duration.seconds(defaultLambdaTimeoutSeconds),
         architecture: lambda.Architecture.ARM_64,
         environment: {
-          PROJECT_NAME: props.pjName,
-          ENV_NAME: props.envName,
-          TOPIC_ARNS: props.snsARTopicArn,
-          LOG_LEVEL: props.lambdaLogLevel,
+          PROJECT_NAME: props.input.pjName,
+          ENV_NAME: props.input.envName,
+          TOPIC_ARNS: props.input.notificationTopicArn,
+          LOG_LEVEL: props.input.lambdaLogLevel ?? defaultLambdaLogLevel,
         },
         role: cWLambdaErrorSubscriptionFilterLambdaRole,
         tracing: lambda.Tracing.ACTIVE,
@@ -77,7 +85,7 @@ export class EcrContinuousScanStack extends cdk.Stack {
     // ECRスキャン時の通知
     //////////////////////////////////////////////////////////////////
     const ecrScanFunctionRole = new iam.Role(this, 'EcrScanFunctionRole',{
-      roleName: ['@role', 'lambda', props.pjName, props.envName, 'ecrscan'].join('-'),
+      roleName: ['@role', 'lambda', props.input.pjName, props.input.envName, 'ecrscan'].join('-'),
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
@@ -100,19 +108,19 @@ export class EcrContinuousScanStack extends cdk.Stack {
       this,
       'ecrScanFunction',
       {
-        functionName: `${props.pjName}-${props.envName}-ecr-scan-notification`,
+        functionName: `${props.input.pjName}-${props.input.envName}-ecr-scan-notification`,
         code: lambda.Code.fromAsset(
           path.join(__dirname, ecrScanLambdaSrcPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: lambda.Runtime.PYTHON_3_9,
-        timeout: cdk.Duration.seconds(30),
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
+        timeout: cdk.Duration.seconds(defaultLambdaTimeoutSeconds),
         architecture: lambda.Architecture.ARM_64,
         environment: {
-          PROJECT_NAME: props.pjName,
-          ENV_NAME: props.envName,
-          TOPIC_ARN: props.snsNoticeTopicArn,
-          LOG_LEVEL: props.lambdaLogLevel,
+          PROJECT_NAME: props.input.pjName,
+          ENV_NAME: props.input.envName,
+          TOPIC_ARN: props.input.notificationTopicArn,
+          LOG_LEVEL: props.input.lambdaLogLevel ?? defaultLambdaLogLevel,
         },
         role: ecrScanFunctionRole,
         tracing: lambda.Tracing.ACTIVE,
@@ -140,17 +148,19 @@ export class EcrContinuousScanStack extends cdk.Stack {
     //////////////////////////////////////////////////////////////////
     // スキャン定義JSON格納用バケット
     const ecrContinuousScanConfigS3 = new BucketConstruct(this,'configS3',{
-      pjName: '',
-      envName: '',
+      pjName: props.input.pjName,
+      envName: props.input.envName,
       bucketPrefix: ['ecr','continuous','scan','config'].join('.') ,
-      
+      contentsPath: path.join(__dirname, `../parameters/${props.input.envName}`),
     });
     // スキャン定義ファイル
+    // 動的に作成する場合は上記contentsPathを使わずに下記
+    /*
     const configJson = [
       {
           "region": region,
           "registry": accountId,
-          "repository": `${props.pjName}-${props.envName}/keycloak`,
+          "repository": `${props.input.pjName}-${props.input.envName}/foo`,
           "tags": [
               "latest"
           ]
@@ -158,22 +168,23 @@ export class EcrContinuousScanStack extends cdk.Stack {
       {
           "region": region,
           "registry": accountId,
-          "repository": `${props.pjName}-${props.envName}/backend`,
+          "repository": `${props.input.pjName}-${props.input.envName}/bar`,
           "tags": [
               "latest"
           ]
       }
     ];
-    
     // JSON ファイルをアップロード
     new s3deploy.BucketDeployment(this, 'EcrContinuousScanConfigJson', {
       sources: [
-        s3deploy.Source.data(`${props.envName}.json`, JSON.stringify(configJson))
+        s3deploy.Source.data(`${props.input.envName}.json`, JSON.stringify(configJson))
       ],
-      destinationBucket: ecrContinuousScanConfigS3,
+      destinationBucket: ecrContinuousScanConfigS3.bucket,
     });
+    */
+    
     const ecrContinuousScanFunctionRole = new iam.Role(this, 'EcrContinuousScanFunctionRole',{
-      roleName: ['@role', 'lambda', props.pjName, props.envName, 'ecr', 'continuous', 'scan'].join('-'),
+      roleName: ['@role', 'lambda', props.input.pjName, props.input.envName, 'ecr', 'continuous', 'scan'].join('-'),
       assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole'),
@@ -200,18 +211,18 @@ export class EcrContinuousScanStack extends cdk.Stack {
       this,
       'ecrContinuousScanFunction',
       {
-        functionName: `${props.pjName}-${props.envName}-ecr-continuous-scan`,
+        functionName: `${props.input.pjName}-${props.input.envName}-ecr-continuous-scan`,
         code: lambda.Code.fromAsset(
           path.join(__dirname, ecrContinuousScanSrcPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: lambda.Runtime.PYTHON_3_9,
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
         timeout: cdk.Duration.seconds(600),
         architecture: lambda.Architecture.ARM_64,
         environment: {
           BUCKET_NAME: ecrContinuousScanConfigS3.bucket.bucketName,
-          OBJECT_KEY_NAME: `${props.envName}.json`,
-          LOG_LEVEL: props.lambdaLogLevel,
+          OBJECT_KEY_NAME: `${props.input.envName}.json`,
+          LOG_LEVEL: props.input.lambdaLogLevel ?? defaultLambdaLogLevel,
         },
         role: ecrContinuousScanFunctionRole,
         tracing: lambda.Tracing.ACTIVE,
