@@ -41,6 +41,7 @@ new CloudFrontS3OacStack(app, 'CloudFrontS3OacStack', {
   description: 'Deliver S3 static website using OAC with CloudFront',
   isAutoDeleteObject: isAutoDeleteObject,
   env: defaultEnv,
+  terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
 // --------------------------------- Tagging  -------------------------------------

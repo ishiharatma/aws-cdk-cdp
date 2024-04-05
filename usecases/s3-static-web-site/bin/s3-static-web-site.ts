@@ -45,6 +45,7 @@ new S3StaticWebSiteStack(app, 'S3StaticWebSiteStack', {
   isAutoDeleteObject: isAutoDeleteObject,
   allowedIpV4AddressRanges: ALLOWED_IP_V4_ADDRESS_RANGES,
   env: defaultEnv,
+  terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 // --------------------------------- Tagging  -------------------------------------
 cdk.Tags.of(app).add('Project', projectName);

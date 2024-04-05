@@ -44,6 +44,7 @@ new CloudFrontS3OaiStack(app, 'CloudFrontS3OaiStack', {
   description: 'Deliver S3 static website using OAI(Legacy) with CloudFront',
   isAutoDeleteObject: isAutoDeleteObject,
   env: defaultEnv,
+  terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
 // --------------------------------- Tagging  -------------------------------------y

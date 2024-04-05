@@ -1,22 +1,2 @@
-import * as cdk from "aws-cdk-lib";
-import { aws_s3 as s3 } from "aws-cdk-lib";
-
-export interface LifecycleRule {
-    prefix?: string;
-    expirationDays: number;
-    ruleNameSuffix?: string;
-    abortIncompleteMultipartUploadAfterDays?: number;
-    transitions?: LifecycleRuleTransitions[];
-};
-
-export interface LifecycleRuleTransitions {
-    storageClass: s3.StorageClass;
-    transitionAfter: cdk.Duration;
-};
-
-export interface listOfWAFRules {
-    name: string;
-    priority: number;
-    overrideAction: string;
-    excludedRules: string[];
-};
+export * from './if_s3';
+export * from './if_pipeline_s3';
