@@ -45,11 +45,12 @@ npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
 
 - env-parameter
 
-### VPC
+### VPC / Network
 
 - vpc-with-nat-ami-al1
 - vpc-with-nat
 - vpc-with-natgw
+- ~~site-to-site-sample~~
 
 ### Static Web Site
 
@@ -59,8 +60,12 @@ npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
 
 - cloudfront-s3-oai (Legacy)
 - cloudfront-s3-oac
-- cloudfront-s3-oac-apigw-lambda
+- ~~cloudfront-s3-oac-apigw-lambda~~
 
 ### CI/CD
 
-TODO
+- cicd-cloudfront-s3
+
+### Container
+
+- ecr-continuous-scan
