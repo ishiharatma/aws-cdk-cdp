@@ -1,7 +1,7 @@
 [
 	{
 		"region": "ap-northeast-1",
-		"registry": "123456789012"
+		"registry": "123456789012",
 		"repository": "foo/bar",
 		"tags": [
 			"latest"
