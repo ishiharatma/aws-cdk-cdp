@@ -6,6 +6,8 @@ This is an old implementation. OAC (Origin Access Control) is currently recommen
 OAI (Origin Access Identity) を使用した Amazon S3 オリジンを持つ Amazon CloudFront ディストリビューションです。
 これは古い実装です。現在、OAC (Origin Access Control) が推奨されています。
 
+## アーキテクチャ
+
 ![overview](overview.png)
 
 - S3サーバーアクセスログ用S3バケット
