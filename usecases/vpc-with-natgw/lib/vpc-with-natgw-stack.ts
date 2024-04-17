@@ -12,6 +12,11 @@ interface MyVpcStackProps extends StackProps {
   readonly pjName: string;
   readonly envName: string;
   readonly vpcCIDR: string
+  /**
+   * Define the maximum number of AZs to use in this region
+   * @default 2 AZ
+   */
+  readonly maxAzs?: number;
   readonly isAutoDeleteObject: boolean;
 } 
 
@@ -25,7 +30,7 @@ export class MyVpcStack extends cdk.Stack {
     const vpc = new ec2.Vpc(this, 'MyVpc', {
       vpcName: [id, 'VPC', accountId].join('/') ,
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCIDR),
-      maxAzs: 2, // 2 Availability Zones
+      maxAzs: props.maxAzs ?? 2, // 2 Availability Zones
       subnetConfiguration: [
         {
           cidrMask: 24,

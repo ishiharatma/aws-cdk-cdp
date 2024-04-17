@@ -49,6 +49,7 @@ npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
 
 - vpc-with-nat-ami-al1
 - vpc-with-nat
+- vpc-with-natinstance-v2
 - vpc-with-natgw
 - ~~site-to-site-sample~~
 

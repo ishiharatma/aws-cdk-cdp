@@ -19,6 +19,10 @@ export class SecurityHubConstruct extends Construct {
           region,
         });
       }
+      // クロスリージョン集約設定
+      new securityhub.CfnHub.(this, 'SecurityHubMasterAccount', {
+        delegatedAdminAccount: accountId,
+      });
       // 他のリージョンのセキュリティハブを管理リージョンに関連付ける
       for (const region of this.availableRegions) {
         if (region !== 'ap-northeast-1') {
@@ -39,6 +43,6 @@ export class SecurityHubConstruct extends Construct {
       });
   }
   get availableRegions(): string[] {
-    return cdk.Stack.of(this).availableRegions;
+    return cdk.Stack.of(this).region;
   }
 }
