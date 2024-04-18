@@ -38,7 +38,7 @@ const isTerminationProtection=false;
 
 console.log(`${COLORS.color_red}Origin Access ID (OAI) is legacy. Origin access control recommended.${COLORS.color_reset}`);
 
-new CloudFrontS3OaiStack(app, 'CloudFrontS3OaiStack', {
+new CloudFrontS3OaiStack(app, `CloudFrontS3OaiStack-${projectName}-${envName}`, {
   pjName: projectName,
   envName: envName,
   description: 'Deliver S3 static website using OAI(Legacy) with CloudFront',

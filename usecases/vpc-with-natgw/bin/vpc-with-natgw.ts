@@ -2,6 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { MyVpcStack } from '../lib/vpc-with-natgw-stack';
+import { TestInstanceStack } from '../../common/stacks/test-instance-stack';
 
 const app = new cdk.App();
 
@@ -31,7 +32,7 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
+const vpc = new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
     pjName: projectName,
     envName: envName,
     vpcCIDR: '10.1.0.0/16',
@@ -40,6 +41,16 @@ new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
     env: defaultEnv,
     terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
+
+new TestInstanceStack(app, `TestInstanceStack-${projectName}-${envName}`, {
+  pjName: projectName,
+  envName: envName,
+  vpc: vpc.vpc,
+  description: 'Create test instance',
+  env: defaultEnv,
+  terminationProtection: isTerminationProtection, // Enabling deletion protection
+});
+
 
 // --------------------------------- Tagging  -------------------------------------
 cdk.Tags.of(app).add('Project', projectName);

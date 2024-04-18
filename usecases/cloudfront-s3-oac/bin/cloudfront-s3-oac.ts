@@ -35,7 +35,7 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new CloudFrontS3OacStack(app, 'CloudFrontS3OacStack', {
+new CloudFrontS3OacStack(app, `CloudFrontS3OacStack-${projectName}-${envName}`, {
   pjName: projectName,
   envName: envName,
   description: 'Deliver S3 static website using OAC with CloudFront',

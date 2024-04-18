@@ -21,13 +21,14 @@ interface MyVpcStackProps extends StackProps {
 } 
 
 export class MyVpcStack extends cdk.Stack {
+  public readonly vpc: ec2.Vpc;
   constructor(scope: Construct, id: string, props: MyVpcStackProps) {
     super(scope, id, props);
 
     const accountId:string = cdk.Stack.of(this).account;
     const region:string = cdk.Stack.of(this).region;
     // VPC
-    const vpc = new ec2.Vpc(this, 'MyVpc', {
+    this.vpc = new ec2.Vpc(this, 'MyVpc', {
       vpcName: [id, 'VPC', accountId].join('/') ,
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCIDR),
       maxAzs: props.maxAzs ?? 2, // 2 Availability Zones
@@ -55,7 +56,7 @@ export class MyVpcStack extends cdk.Stack {
 
     // NAT Instance Security Group
     const natSecurityGroup = new ec2.SecurityGroup(this, 'NATSecurityGroup', {
-      vpc,
+      vpc:this.vpc,
       description: 'Security group for NAT instances',
       allowAllOutbound: true,
     });
@@ -69,7 +70,7 @@ export class MyVpcStack extends cdk.Stack {
     // Security Hub EC2.19
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-19
     // natSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp(), 'Allow all inbound traffic');
-    natSecurityGroup.addIngressRule(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.allTcp(), 'Allow inbound traffic from VPC');
+    natSecurityGroup.addIngressRule(ec2.Peer.ipv4(this.vpc.vpcCidrBlock), ec2.Port.allTcp(), 'Allow inbound traffic from VPC');
 
     // // Allow outbound traffic
     natSecurityGroup.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp(), 'Allow all outbound traffic');
@@ -95,7 +96,7 @@ export class MyVpcStack extends cdk.Stack {
     });
     
     const natInstance = new ec2.Instance(this, 'NATInstance', {
-      vpc,
+      vpc:this.vpc,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
       ssmSessionPermissions: true, // SSM用
       machineImage: ec2.MachineImage.latestAmazonLinux2023({
@@ -124,7 +125,7 @@ export class MyVpcStack extends cdk.Stack {
 
     // NACL for Public Subnets
     const naclPublic = new ec2.NetworkAcl(this, 'NaclPublic', {
-      vpc: vpc,
+      vpc: this.vpc,
       subnetSelection: { subnetType: ec2.SubnetType.PUBLIC },
     });
     // Egress Rules for Public Subnets
@@ -145,7 +146,7 @@ export class MyVpcStack extends cdk.Stack {
     });
     // NACL for Private Subnets
     const naclPrivate = new ec2.NetworkAcl(this, 'NaclPrivate', {
-      vpc: vpc,
+      vpc: this.vpc,
       subnetSelection: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
     });
     // Egress Rules for Private Subnets
@@ -199,7 +200,7 @@ export class MyVpcStack extends cdk.Stack {
       value: flowLogsBucket.bucketName,
     });
 
-    vpc.addFlowLog('FlowLogs', {
+    this.vpc.addFlowLog('FlowLogs', {
       destination: ec2.FlowLogDestination.toS3(flowLogsBucket),
       trafficType: ec2.FlowLogTrafficType.ALL,
     });

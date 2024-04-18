@@ -39,9 +39,10 @@ const isTerminationProtection=false;
 // e.g.) ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  ['192.0.2.1/32','192.0.2.2/32']; 
 const ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  [];
 
-new S3StaticWebSiteStack(app, 'S3StaticWebSiteStack', {
+new S3StaticWebSiteStack(app, `S3StaticWebSiteStack-${projectName}-${envName}`, {
   pjName: projectName,
   envName: envName,
+  description: '',
   isAutoDeleteObject: isAutoDeleteObject,
   allowedIpV4AddressRanges: ALLOWED_IP_V4_ADDRESS_RANGES,
   env: defaultEnv,

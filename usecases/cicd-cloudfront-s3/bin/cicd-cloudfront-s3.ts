@@ -35,7 +35,7 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new CicdCloudfrontS3Stack(app, 'CicdCloudfrontS3Stack', {
+new CicdCloudfrontS3Stack(app, `CicdCloudfrontS3Stack-${projectName}-${envName}`, {
   input: {
     pjName: projectName,
     envName: envName,

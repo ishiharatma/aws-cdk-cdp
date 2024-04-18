@@ -1,14 +1,9 @@
-# Welcome to your CDK TypeScript project
+# VPC with NAT Instance(NatProvider.instanceV2)
 
-This is a blank project for CDK development with TypeScript.
+This is a sample of building a custom NAT instance.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+独自のNATインスタンスを構築するサンプルです.
 
-## Useful commands
+![vpc-with-nat-overview](overview.drawio.svg)
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+[VPC with NAT Instance - AWS 料金見積りツール](https://calculator.aws/#/estimate?id=b984627239000fd0fee402b6bbb6b9fbedaa7a65)
