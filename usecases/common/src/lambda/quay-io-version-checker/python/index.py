@@ -74,6 +74,7 @@ def check_version(current_version, git_tags):
 def get_ecr_describe_images(repository_name):
     try:
         ecrclient = boto3.client("ecr", region_name="ap-northeast-1")
+        # see: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecr/client/describe_images.html
         response_image_latest_tag = ecrclient.describe_images(
             repositoryName= repository_name,
             imageIds=[
