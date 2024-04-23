@@ -2,4 +2,4 @@
 
 ## アーキテクチャ
 
-![overview](overview.png)
+![overview](overview.drawio.svg)

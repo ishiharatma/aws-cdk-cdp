@@ -6,4 +6,4 @@ ECRに存在するコンテナイメージをスケジュールに従ってス�
 
 ## アーキテクチャ
 
-![overview](overview.png)
+![overview](overview.drawio.svg)

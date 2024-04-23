@@ -8,7 +8,7 @@ OAI (Origin Access Identity) を使用した Amazon S3 オリジンを持つ Ama
 
 ## アーキテクチャ
 
-![overview](overview.png)
+![overview](overview.drawio.svg)
 
 - S3サーバーアクセスログ用S3バケット
 - CloudFrontのアクセスログ用S3バケット
@@ -19,3 +19,7 @@ OAI (Origin Access Identity) を使用した Amazon S3 オリジンを持つ Ama
 [(Aug 25, 2022)Amazon CloudFront でオリジンアクセスコントロール (OAC) をリリース](https://aws.amazon.com/jp/about-aws/whats-new/2022/08/amazon-cloudfront-origin-access-control/)
 
 [オリジンアクセスアイデンティティ (OAI) からオリジンアクセスコントロール (OAC) への移行](https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html#migrate-from-oai-to-oac)
+
+## 料金
+
+[CloudFront + S3 + OAC/OAI - AWS 料金見積りツール](https://calculator.aws/#/estimate?id=41511c073eec10d71c045acf78da8160d5e5f8ca)
