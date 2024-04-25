@@ -1,0 +1,7 @@
+PJName: "sample"
+EnvName: "dev"
+VPCId: "vpc-01234567890abcdef"
+PgAdminLoginId: "admin@example.com"
+PgAdminLoginPassword: "p@ssword"
+PgAdminEC2startSchedule: "cron(0 0 ? * MON-FRI *)" # 月曜日から金曜日の午前0時(JST午前9時)
+PgAdminEC2stopSchedule: "cron(0 9 ? * MON-FRI *)"  # 月曜日から金曜日の午後9時(JST午後6時)
