@@ -14,6 +14,7 @@ rm package.json
 cdk init app --language typescript
 cd ../../
 cp tsconfig_usecases.json .\usecases\${usecase_name}\tsconfig.json
+cp README_usecase_template.md .\usecases\${usecase_name}\README.md
 npm install -w usecases\${usecase_name} --save aws-cdk-lib constructs
 ```
 
@@ -27,6 +28,7 @@ del package.json
 cdk init app --language typescript
 cd ../../
 copy /y tsconfig_usecases.json .\usecases\%usecase_name%\tsconfig.json
+copy /y README_usecase_template.md .\usecases\%usecase_name%\README.md
 npm install -w usecases\%usecase_name% --save aws-cdk-lib constructs
 npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
 ```
