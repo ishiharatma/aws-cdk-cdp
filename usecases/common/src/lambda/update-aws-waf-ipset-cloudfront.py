@@ -66,7 +66,7 @@ def lambda_handler(event, context):
         file_content = file_obj['Body'].read().decode('utf-8')
         # ファイルの内容から IP アドレスのリストを作成
         ip_addresses = [line.strip() for line in file_content.split('\n') if line.strip()]
-        logger.info(ip_addresses) 
+        logger.debug(ip_addresses) 
         
         update_waf_ipset(IP_SET_NAME,IP_SET_ID,ip_addresses)
     
