@@ -1,4 +1,4 @@
-# start_stop_ec2_instance
+# start-stop-ec2-instance
 
 ## Description
 
