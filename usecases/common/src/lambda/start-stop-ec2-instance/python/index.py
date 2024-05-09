@@ -22,34 +22,37 @@ def is_execute(action, ec2_status) -> bool:
 
     if action == "Start" and ec2_status == "stopped":
         return True
-    elif action == "Stop" and ec2_status == "running":
+    
+    if action == "Stop" and ec2_status == "running":
         return True
-    else:
-        return False
+    
+    return False
 
 def lambda_handler(event, context):
     try:
         logger.info('start')
         logger.info('event: {}'.format(event))
-        logLevel = os.environ.get('LOG_LEVEL', 'DEBUG')
+        logLevel = os.environ.get('LOG_LEVEL', 'INFO')
         logger.setLevel(logLevel)
-        ssm_calendar_arn = os.environ.get('SSM_CALENDAR_ARN', '')
-        instance_id = os.environ.get('INSTANCE_ID', '')
-        region = os.environ.get('REGISON', os.getenv("AWS_DEFAULT_REGION"))
+        region = os.environ.get('REGION', os.getenv("AWS_DEFAULT_REGION"))
         target_date = os.environ.get('TARGET_DATE', get_today())
         logger.debug('target_date: {}'.format(target_date))
+        
+        # get Event Parameters
         action = event.get('Action','N/A')
+        instance_id = event.get('InstanceId','')
+        ssm_calendar_arn = event.get('SSMCalendarArn', '')
 
         if not instance_id:
             raise Exception('{} is unspecified'.format(instance_id))
-        
+
         logger.info('Action:{action}, EC2:{instance_id}'.format(action=action, instance_id=instance_id))
         
         ec2 = boto3.client('ec2', region_name=region)
 
         if not ssm_calendar_arn:
-            #raise Exception('{} is unspecified'.format('SSM_CALENDAR_ARN'))
-            logger.debug('Run with OEPN because no SSM_CALENDAR_ARN is specified'.format())
+            #raise Exception('{} is unspecified'.format('SSMCalendarArn'))
+            logger.debug('Run with OEPN because no SSMCalendarArn is specified'.format())
             calendar_state = 'OPEN'
         else:
             ssm = boto3.client('ssm')
@@ -60,7 +63,7 @@ def lambda_handler(event, context):
                 ],
                  AtTime=target_date #  ISO 8601 e.g.) 2023-09-18T00:00:00+09:00
             )
-    
+
             logger.debug('get_calendar_state response: {}'.format(calendar_response))
             calendar_state = calendar_response.get('State')
 
