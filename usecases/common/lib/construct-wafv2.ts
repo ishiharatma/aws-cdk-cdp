@@ -28,7 +28,7 @@ interface WAFProps {
   /**
    * @default - false
    */
-  readonly enableS3Log?: Boolean;
+  readonly enableS3Log?: boolean;
   /**
    * @default - 365 Days
    */
