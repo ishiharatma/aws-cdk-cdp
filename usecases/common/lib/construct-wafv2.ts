@@ -364,7 +364,7 @@ export class WAFv2Construct extends Construct {
         pjName: props.pjName,
         envName: props.envName,
         bucketPrefix: 'aws-waf-logs',
-        bucketSuffix: '',
+        bucketSuffix: props.webACLNameSuffix,
         isAutoDeleteObject: props.isAutoDeleteObject,
         accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
         lifecycleRules: [

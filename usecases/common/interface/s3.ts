@@ -14,9 +14,3 @@ export interface LifecycleRuleTransitions {
     transitionAfter: cdk.Duration;
 };
 
-export interface listOfWAFRules {
-    name: string;
-    priority: number;
-    overrideAction: string;
-    excludedRules: string[];
-};
