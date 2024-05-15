@@ -29,8 +29,24 @@ cdk init app --language typescript
 cd ../../
 copy /y tsconfig_usecases.json .\usecases\%usecase_name%\tsconfig.json
 copy /y README_usecase_template.md .\usecases\%usecase_name%\README.md
+copy /y overview_template.drawio.svg .\usecases\%usecase_name%\overview.drawio.svg
 npm install -w usecases\%usecase_name% --save aws-cdk-lib constructs
 npm install -w usecases\%usecase_name% --save-dev @types/js-yaml
+```
+
+```PowerShell
+$usecase_name="sample"
+npm init -w "usecases\$usecase_name"
+Set-Location "usecases\$usecase_name"
+Remove-Item package.json -Force
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+cdk init app --language typescript
+Set-Location ..\..\
+Copy-Item tsconfig_usecases.json .\usecases\$usecase_name\tsconfig.json -Force
+Copy-Item README_usecase_template.md .\usecases\$usecase_name\README.md -Force
+Copy-Item overview_template.drawio.svg .\usecases\$usecase_name\overview.drawio.svg -Force
+npm install -w usecases\$usecase_name --save aws-cdk-lib constructs
+npm install -w usecases\$usecase_name --save-dev @types/js-yaml
 ```
 
 ```json

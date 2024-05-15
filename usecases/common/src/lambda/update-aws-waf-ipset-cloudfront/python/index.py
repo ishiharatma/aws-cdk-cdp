@@ -50,7 +50,6 @@ def get_ipset_lock_token(client,ipset_name,ipset_id,scope):
     return ip_set
 
 def lambda_handler(event, context):
-    # TODO implement
     try:
         logger.info('start')
         logger.info('event: {}'.format(event))
@@ -65,14 +64,15 @@ def lambda_handler(event, context):
         file_obj = s3.get_object(Bucket=bucket_name, Key=file_key)
         file_content = file_obj['Body'].read().decode('utf-8')
         # ファイルの内容から IP アドレスのリストを作成
-        ip_addresses = [line.strip() for line in file_content.split('\n') if line.strip()]
+        # 空白行および、先頭が'#'で始まるコメント行を除外
+        ip_addresses = [line.strip() for line in file_content.split('\n') if line.strip() and not line.startswith('#')]
         logger.debug(ip_addresses) 
         
         update_waf_ipset(IP_SET_NAME,IP_SET_ID,ip_addresses)
     
         return ip_addresses
     except Exception as e:
-        print(e)
-        print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(file_key, bucket_name))
+        logger.exception(str(e))
+        logger.exception('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(file_key, bucket_name))
         raise e
 
