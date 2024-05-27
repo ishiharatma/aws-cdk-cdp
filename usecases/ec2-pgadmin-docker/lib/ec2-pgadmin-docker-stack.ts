@@ -73,6 +73,7 @@ export class Ec2PgadminDockerStack extends cdk.Stack {
       // Security Hub EC2.8
       // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-8
       requireImdsv2: true,
+      keyPair: keyPair,
     });
     new cdk.CfnOutput(this, "EC2InstanceId", {
         value: this.instance.instanceId,

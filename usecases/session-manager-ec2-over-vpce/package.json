@@ -1,8 +1,8 @@
 {
-  "name": "vpc-with-natinstance-v2",
+  "name": "session-manager-ec2-over-vpce",
   "version": "0.1.0",
   "bin": {
-    "vpc-with-natinstance-v2": "bin/vpc-with-natinstance-v2.js"
+    "session-manager-ec2-over-vpce": "bin/session-manager-ec2-over-vpce.js"
   },
   "scripts": {
     "build": "tsc",
