@@ -103,3 +103,8 @@ typings/
 .yarn-integrity
 .env
 .next
+
+export.bat
+
+
+# Under construction

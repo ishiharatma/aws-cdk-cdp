@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "G-01ZZ95D1K9",
+  "updated": "2024-06-03T21:47:07+09:00",
+  "id": "CDP",
+  "duration": 0,
+  "title": "AWS Cloud Design Pattern (CDP) using AWS CDK",
+  "authors": "ishr",
+  "summary": "Summary",
+  "source": "K:\\work\\@git\\github.com\\@myaccount\\aws-cdk-cdp\\claat_header\\..\\claat_CDP.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "aws"
+  ],
+  "tags": [
+    "awsclouddesignpattern(cdp)"
+  ],
+  "url": "CDP"
+}
