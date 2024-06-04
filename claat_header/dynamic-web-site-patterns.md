@@ -1,5 +1,5 @@
 summary: Summary
-id: CDP
+id: dynamic-web-site-patterns
 categories: AWS
 tags: AWS Cloud Design Pattern (CDP)
 status: Published
