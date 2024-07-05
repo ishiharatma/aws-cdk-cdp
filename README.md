@@ -2,7 +2,7 @@
 
 This is a sample repository of cloud design patterns on AWS CDK.
 
-![banner](./banner.png)
+![banner](/banner.png)
 
 ## Add usecase
 
