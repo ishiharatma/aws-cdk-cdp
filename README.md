@@ -62,3 +62,7 @@ npm install -w usecases\$usecase_name --save-dev @types/js-yaml
 ## AWS Cloud Design Patterns
 
 ![CDP](./CDP.md)
+
+## License
+
+このプロジェクトは Apache License 2.0 のもとで公開されています。詳細は [LICENSE](LICENSE) ファイルをご覧ください。
