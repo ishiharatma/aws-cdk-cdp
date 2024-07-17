@@ -84,7 +84,7 @@ export class MyVpcStack extends cdk.Stack {
       'sudo systemctl start iptables',
       'echo net.ipv4.ip_forward=1 >> /etc/sysctl.d/custom-ip-forwarding.conf',
       'sudo sysctl -p /etc/sysctl.d/custom-ip-forwarding.conf',
-      'sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE',
+      'sudo /sbin/iptables -t nat -A POSTROUTING -o $(route | awk '/^default/{print $NF}') -j MASQUERADE',
       'sudo /sbin/iptables -F FORWARD',
       'sudo service iptables save',
     );
