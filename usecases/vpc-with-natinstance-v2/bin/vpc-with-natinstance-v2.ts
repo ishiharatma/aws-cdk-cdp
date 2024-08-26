@@ -37,6 +37,9 @@ const vpc = new VpcWithNatinstanceV2Stack(app, `VPCWithNATStack-${projectName}-$
     envName: envName,
     vpcCIDR: '10.0.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
+    natInstanceStartCronSchedule: "cron(0 23 ? * SUN-THU *)",
+    natInstanceStopCronSchedule: "cron(30 9 ? * MON-FRI *)",
+    //isAttacheElasticIp: true,
     description: 'VPC with custom NAT instance',
     env: defaultEnv,
     terminationProtection: isTerminationProtection, // Enabling deletion protection

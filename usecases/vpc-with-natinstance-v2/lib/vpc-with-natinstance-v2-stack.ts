@@ -6,6 +6,7 @@ import {
   aws_ec2 as ec2,
   aws_iam as iam,
   aws_kms as kms,
+  aws_events as events,
 } from 'aws-cdk-lib';
 interface VpcWithNatinstanceV2StackProps extends StackProps {
   readonly pjName: string;
@@ -26,6 +27,15 @@ interface VpcWithNatinstanceV2StackProps extends StackProps {
    * @default t4.nano
    */
   readonly natInstanceType?: string;
+  /**
+   * NAT Instance Stop Cron Schedule
+   */
+  readonly natInstanceStopCronSchedule?: string;
+  /**
+   * NAT Instance Start Cron Schedule
+   */
+  readonly natInstanceStartCronSchedule?: string;
+  readonly isAttacheElasticIp?: boolean;
   readonly isAutoDeleteObject: boolean;
 } 
 
@@ -38,6 +48,7 @@ export class VpcWithNatinstanceV2Stack extends cdk.Stack {
     const accountId:string = cdk.Stack.of(this).account;
     const region:string = cdk.Stack.of(this).region;
     const natGateways: number = props.natgateways ?? 0;
+    const isAttacheElasticIp: boolean = props.isAttacheElasticIp ?? false;
 
     const natInstance = ec2.NatProvider.instanceV2({
       instanceType: props.natInstanceType
@@ -86,6 +97,58 @@ export class VpcWithNatinstanceV2Stack extends cdk.Stack {
     // Security Hub EC2.19
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-19
     natInstance.securityGroup.addIngressRule(ec2.Peer.ipv4(props.vpcCIDR),ec2.Port.allTraffic());
+
+
+    const role = new iam.Role(this, `NatInstanceStartStopRole`, {
+      roleName: [props.pjName, props.envName, 'NatInstanceStartStop'].join('-'),
+      assumedBy: new iam.ServicePrincipal('events.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonSSMAutomationRole'),
+      ]
+    });
+
+    natInstance.configuredGateways.map(
+      (nat, index) =>  {
+        if (isAttacheElasticIp) {
+          new ec2.CfnEIP(this, `NatEIP${index + 1}`, {
+            instanceId: nat.gatewayId,
+            tags: [
+              { key: 'Name', value: `NatInstanceEIP${index + 1}` },
+            ],
+          });  
+        }
+        if (props.natInstanceStartCronSchedule && props.natInstanceStopCronSchedule) {
+          // 起動スケジュール
+          new events.CfnRule(this, `EC2StartRule${index + 1}`, {
+            name: [props.pjName, props.envName, 'NATStartRule', nat.gatewayId].join('-'),
+            description: `${nat.gatewayId} ${props.natInstanceStartCronSchedule} Start`,
+            scheduleExpression: props.natInstanceStartCronSchedule,
+            targets: [{
+              arn: `arn:aws:ssm:${region}::automation-definition/AWS-StartEC2Instance:$DEFAULT`,
+              id: 'TargetEC2Instance1',
+              input: `{"InstanceId": ["${nat.gatewayId}"]}`,
+              roleArn: role.roleArn
+            }]
+          });
+          
+          // 停止スケジュール
+          new events.CfnRule(this, `EC2StopRule${index + 1}`, {
+            name: [props.pjName, props.envName, 'NATStopRule', nat.gatewayId].join('-'),
+            description: `${nat.gatewayId} ${props.natInstanceStopCronSchedule} Stop`,
+            scheduleExpression: props.natInstanceStopCronSchedule,
+            targets: [{
+              arn: `arn:aws:ssm:${region}::automation-definition/AWS-StopEC2Instance:$DEFAULT`,
+              id: 'TargetEC2Instance1',
+              input: `{"InstanceId": ["${nat.gatewayId}"]}`,
+              roleArn: role.roleArn
+            }]
+          });
+        }
+        // Export NAT InstanceID
+        new cdk.CfnOutput(this, `NatInstanceId${index + 1}`, {
+          value: nat.gatewayId,
+        });
+    });
 
     // Security Hub EC2.6
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-6

@@ -2,13 +2,16 @@ import { Construct } from 'constructs';
 import * as cdk from 'aws-cdk-lib';
 import {
     aws_ec2 as ec2,
+    aws_events as events,
+    aws_iam as iam
 } from 'aws-cdk-lib';
 
 interface TestEC2InstanceProps {
   readonly pjName: string;
   readonly envName: string;
   readonly vpc: ec2.Vpc;
-
+  readonly stopCronSchedule?: string;
+  readonly startCronSchedule?: string;
 }
 
 export class TestEC2InstanceConstruct extends Construct {
@@ -62,5 +65,41 @@ export class TestEC2InstanceConstruct extends Construct {
         value: this.instance.instanceId,
         description: "Test Instance",
     });
+
+    if (props.startCronSchedule && props.stopCronSchedule) {
+      
+      const role = new iam.Role(this, `NatInstanceStartStopRole`, {
+        roleName: [props.pjName, props.envName, 'NatInstanceStartStop'].join('-'),
+        assumedBy: new iam.ServicePrincipal('events.amazonaws.com'),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonSSMAutomationRole'),
+        ]
+      });
+      // 起動スケジュール
+      new events.CfnRule(this, `EC2StartRule`, {
+        name: [props.pjName, props.envName, 'EC2StartRule', this.instance.instanceId].join('-'),
+        description: `${this.instance.instanceId} ${props.startCronSchedule} Start`,
+        scheduleExpression: props.startCronSchedule,
+        targets: [{
+          arn: `arn:aws:ssm:${region}::automation-definition/AWS-StartEC2Instance:$DEFAULT`,
+          id: 'TargetEC2Instance1',
+          input: `{"InstanceId": ["${this.instance.instanceId}"]}`,
+          roleArn: role.roleArn
+        }]
+      });
+      
+      // 停止スケジュール
+      new events.CfnRule(this, `EC2StopRule`, {
+        name: [props.pjName, props.envName, 'EC2StopRule', this.instance.instanceId].join('-'),
+        description: `${this.instance.instanceId} ${props.stopCronSchedule} Stop`,
+        scheduleExpression: props.stopCronSchedule,
+        targets: [{
+          arn: `arn:aws:ssm:${region}::automation-definition/AWS-StopEC2Instance:$DEFAULT`,
+          id: 'TargetEC2Instance1',
+          input: `{"InstanceId": ["${this.instance.instanceId}"]}`,
+          roleArn: role.roleArn
+        }]
+      });
+    }
   }
 }
