@@ -1,4 +1,4 @@
-# WS Cloud Design Patterns
+# AWS Cloud Design Patterns
 
 This is a sample repository of cloud design patterns on AWS CDK.
 
