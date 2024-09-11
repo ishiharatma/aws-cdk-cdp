@@ -1,26 +1,26 @@
 # XXXX
 
-[日本語](README.ja.md) | English
+日本語 | [English](README.md)
 
 ## **Sorry!Under construction!!**
 
-## Architecture Overview
+## アーキテクチャ概要
 
 ![overview](overview.drawio.svg)
 
 - xxxx
 - xxxx
 
-### Key Components
+### 主要コンポーネント
 
 - xxxx
 - xxxx
 
-## Deploy
+## デプロイ
 
-## Usage
+## 使用方法
 
-## Clean-up
+## クリーンアップ
 
 ## 料金
 
