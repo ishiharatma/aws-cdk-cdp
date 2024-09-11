@@ -2,7 +2,7 @@
 
 This is a sample repository of cloud design patterns on AWS CDK.
 
-## A
+![top](./banner.png)
 
 [goto GitHub Pages](https://ishiharatma.github.io/aws-cdk-cdp/)
 
