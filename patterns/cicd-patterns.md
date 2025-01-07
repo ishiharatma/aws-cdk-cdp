@@ -7,6 +7,12 @@
 
 ![](./usecases/cicd-cloudfront-s3/overview.drawio.svg)
 
+## cicd-ecs-fargate
+
+[Goto Github Repository](./usecases/cicd-ecs-fargate)
+
+![](./usecases/cicd-ecs-fargate/overview.drawio.svg)
+
 ## cicd-lambda
 
 **Sorry!Under construction!!**
