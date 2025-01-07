@@ -1,0 +1,115 @@
+version: 0.2
+
+# Description:
+#
+# Environment:
+#    ECR_REPOSITORY_NAME
+#    CONTAINER_NAME
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-17-amazon-corretto"
+phases:
+  install:
+    commands:
+      - echo Project [${PROJECT_NAME}]
+      - echo Environment [${ENV_NAME}]
+      - echo Docker Version [`docker version`]
+      - AWS_CLI_RUN_INSTALL=0
+      - echo AWS CLI Version [`aws --version`]
+      - |
+        if [ ! command -v aws --version >/dev/null 2>&1 ] ; then
+          echo AWS CLI is not installed ;
+          AWS_CLI_RUN_INSTALL=1 ;
+        else
+          AWS_VER_REGEXP_2=`aws --version 2>&1 | grep -e 'aws-cli\/2.\d*.\d*'`
+          AWS_VER_REGEXP_1=`aws --version 2>&1 | grep -e 'aws-cli\/1.\d*.\d*'`
+          if [ "$AWS_VER_REGEXP_2" ] ; then
+            echo AWS CLI v2 is installed ;
+          fi
+          if [ "$AWS_VER_REGEXP_1" ] ; then
+            echo AWS CLI v1 is installed ;
+            AWS_CLI_RUN_INSTALL=1 ;
+          fi
+        fi
+      - |
+        if [ "${AWS_CLI_RUN_INSTALL}" -eq 1 ] ; then
+          echo Install aws cli v2 ;
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" ;
+          unzip awscliv2.zip ;
+          ./aws/install --install-dir /usr/local/aws-cli --update ;
+          echo AWS CLI Version [`aws --version`] ;
+        fi
+      - echo Install java-17-openjdk
+      - apt-get update; apt-get install -y java-17-amazon-corretto-jdk
+      - update-alternatives --auto javac
+      - update-alternatives --auto java
+      - echo "${JAVA_HOME}"
+      - echo Build Environment
+      - echo CODEBUILD_RESOLVED_SOURCE_VERSION=${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - echo CODEBUILD_SOURCE_VERSION=${CODEBUILD_SOURCE_VERSION}
+      - echo CODEBUILD_START_TIME=${CODEBUILD_START_TIME}
+      - echo ECR_REPOSITORY_NAME=${ECR_REPOSITORY_NAME}
+      - echo ECS_TASK_DEFINITION_ARN=${ECS_TASK_DEFINITION_ARN}
+      - echo IMAGE_NAME=${IMAGE_NAME}
+      - echo Trivy Install...
+      - TRIVY_VERSION=0.36.1
+      - wget https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
+      - mkdir trivy && tar zxvf trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz -C trivy
+      - echo Trivy Version [`./trivy/trivy --version`]
+  pre_build:
+    commands:
+      - echo Pre-Build started on `date`
+      - echo AWS CLI Version [`aws --version`]
+      - echo Logging in to Amazon ECR...
+      - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
+      - echo AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}
+      - echo AWS REPOSITORY_URI=${REPOSITORY_URI}
+      # CLI v1
+      #- $(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+      # CLI v2
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
+      # get commit id
+      # CODEBUILD_SOURCE_VERSION :refs/heads/master
+      # CODEBUILD_RESOLVED_SOURCE_VERSION:
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo COMMIT_HASH=${COMMIT_HASH}
+      - IMAGE_TAG=${ENV_NAME}-${COMMIT_HASH}
+      - echo IMAGE_TAG=${IMAGE_TAG}
+      - aws ecs describe-task-definition --task-definition ${ECS_TASK_DEFINITION_ARN} --query taskDefinition | jq '.containerDefinitions[0].image="<IMAGE1_NAME>"' > taskdef.json
+      - echo add permission to gradlew
+      - chmod +x gradlew
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the SpringBoot project...
+      - echo ${JAVA_HOME}
+      - ./gradlew build -x test
+      - echo Building the Docker image...
+      - docker build -t ${REPOSITORY_URI}:latest .
+      - echo Add a tag ${IMAGE_TAG}
+      - docker tag ${REPOSITORY_URI}:latest ${REPOSITORY_URI}:${IMAGE_TAG}
+      - echo Trivy Scan started on `date`
+      - outputfile_prefix=results_${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - ./trivy/trivy image --format template --template "@./trivy/contrib/html.tpl" -o ${outputfile_prefix}.html --no-progress --ignore-unfixed --exit-code 0 --timeout 10m --severity HIGH,CRITICAL ${REPOSITORY_URI}:${IMAGE_TAG}
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - |
+        if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ] ; then
+          echo Pushing the Docker image...[${IMAGE_TAG}] ;
+          docker push ${REPOSITORY_URI}:${IMAGE_TAG} ;
+          echo Pushing the Docker image...[latest] ;
+          docker push ${REPOSITORY_URI}:latest ;
+          echo Writing image definitions file... ;
+          echo "[{\"name\":\"${IMAGE_NAME}\",\"imageUri\":\"${REPOSITORY_URI}:${IMAGE_TAG}\"}]" > imagedefinitions.json ;
+          printf '{"Version":"1.0", "ImageURI":"%s"}' ${REPOSITORY_URI}:${IMAGE_TAG} > imageDetail.json ;
+        fi
+artifacts:
+  files:
+    - imageDetail.json
+    - imagedefinitions.json
+    - taskdef.json
+    - ${outputfile_prefix}.html
