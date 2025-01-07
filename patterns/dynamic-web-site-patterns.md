@@ -4,6 +4,6 @@
 
 **Sorry!Under construction!!**
 
-[Goto Github Repository](./usecases/cloudfront-s3-oac-apigw-lambda/)
+[Goto Github Repository](../usecases/cloudfront-s3-oac-apigw-lambda/)
 
 ![](./usecases/cloudfront-s3-oac-apigw-lambda/overview.drawio.svg)

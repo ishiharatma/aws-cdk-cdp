@@ -2,4 +2,4 @@
 
 **Sorry!Under construction!!**
 
-[Goto Github Repository](./usecases//)
+[Goto Github Repository](../usecases//)

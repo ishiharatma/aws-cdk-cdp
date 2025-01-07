@@ -2,14 +2,14 @@
 
 ## cicd-cloudfront-s3
 
-[Goto Github Repository](./usecases/cicd-cloudfront-s3/)
+[Goto Github Repository](../usecases/cicd-cloudfront-s3/)
 
 
 ![](./usecases/cicd-cloudfront-s3/overview.drawio.svg)
 
 ## cicd-ecs-fargate
 
-[Goto Github Repository](./usecases/cicd-ecs-fargate)
+[Goto Github Repository](../usecases/cicd-ecs-fargate)
 
 ![](./usecases/cicd-ecs-fargate/overview.drawio.svg)
 
@@ -17,7 +17,7 @@
 
 **Sorry!Under construction!!**
 
-[Goto Github Repository](./usecases/cicd-lambda/)
+[Goto Github Repository](../usecases/cicd-lambda/)
 
 ![](./usecases/cicd-lambda/overview.drawio.svg)
 
@@ -25,6 +25,6 @@
 
 **Sorry!Under construction!!**
 
-[Goto Github Repository](./usecases/cicd-sam-apigw-lambda/)
+[Goto Github Repository](../usecases/cicd-sam-apigw-lambda/)
 
 ![](./usecases/cicd-sam-apigw-lambda/overview.drawio.svg)
