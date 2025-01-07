@@ -3,13 +3,13 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "G-01ZZ95D1K9",
-  "updated": "2024-06-05T01:26:25+09:00",
+  "updated": "2025-01-08T00:18:41+09:00",
   "id": "container-patterns",
   "duration": 0,
   "title": "Container Patterns",
   "authors": "ishr",
   "summary": "Summary",
-  "source": "K:\\work\\@git\\github.com\\@myaccount\\aws-cdk-cdp\\claat_header\\..\\claat_container-patterns.md",
+  "source": "C:\\git\\GitHub\\private\\aws-cdk-cdp\\claat_header\\..\\claat_container-patterns.md",
   "theme": "",
   "status": [
     "published"
