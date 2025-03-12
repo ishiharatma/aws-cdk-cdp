@@ -1,6 +1,6 @@
 import { App, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { CloudfrontS3OacCognitoStack } from '../lib/cloudfront-s3-oac-cognito-stack';
+import {CloudFrontS3OacStack} from '../lib/cloudfront-s3-oac-stack';
 
 const projectName = 'unittest';
 const envName = 'test';
@@ -10,12 +10,12 @@ const defaultEnv = {
     region: 'ap-northeast-1',
 };
 
-test('SnapShot', () => {
+test('Case1: Normal', () => {
     // GIVEN
     const app = new App({
         context : {}
     });
-    const stack = new CloudfrontS3OacCognitoStack(app, 'CloudfrontS3OacCognitoStack', {
+    const stack = new CloudFrontS3OacStack(app, 'CloudFrontS3OacStack', {
         pjName: projectName,
         envName: envName,
         description: 'Deliver S3 static website using OAC with CloudFront',
@@ -26,8 +26,8 @@ test('SnapShot', () => {
     // WHEN
     const template = Template.fromStack(stack);
     // THEN
-    // test with snapshot
-    expect(template).toMatchSnapshot();
+    template.resourceCountIs('AWS::CloudFront::Distribution', 1);
+    template.resourceCountIs('AWS::CloudFront::OriginAccessControl', 1);
+    template.resourceCountIs('AWS::S3::Bucket', 3);
 
 });
-

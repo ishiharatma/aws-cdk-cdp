@@ -1,10 +1,10 @@
 # CloudFront + S3 + OAI(origin access identity)
 
 Amazon CloudFront distribution resource with an Amazon S3 origin using an OAI (Origin Access Identity).
-This is an old implementation. OAC (Origin Access Control) is currently recommended.
+**This is an old implementation**. OAC (Origin Access Control) is currently recommended.
 
 OAI (Origin Access Identity) を使用した Amazon S3 オリジンを持つ Amazon CloudFront ディストリビューションです。
-これは古い実装です。現在、OAC (Origin Access Control) が推奨されています。
+これは**古い実装**です。現在、OAC (Origin Access Control) が推奨されています。
 
 ## アーキテクチャ
 

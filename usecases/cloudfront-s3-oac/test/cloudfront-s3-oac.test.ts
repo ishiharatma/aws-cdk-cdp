@@ -10,7 +10,7 @@ const defaultEnv = {
     region: 'ap-northeast-1',
 };
 
-test('Case1', () => {
+test('Snapshot', () => {
     // GIVEN
     const app = new App({
         context : {}
@@ -26,7 +26,7 @@ test('Case1', () => {
     // WHEN
     const template = Template.fromStack(stack);
     // THEN
-    template.resourceCountIs('AWS::CloudFront::Distribution', 1);
-    template.resourceCountIs('AWS::CloudFront::OriginAccessControl', 1);
+    // test with snapshot
+    expect(template).toMatchSnapshot();
 
 });

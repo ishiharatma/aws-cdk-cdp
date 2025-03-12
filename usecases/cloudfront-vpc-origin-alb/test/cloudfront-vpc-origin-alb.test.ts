@@ -1,6 +1,6 @@
 import { App, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { CloudfrontS3OacCognitoStack } from '../lib/cloudfront-s3-oac-cognito-stack';
+import { CloudfrontVpcOriginAlbStack } from '../lib/cloudfront-vpc-origin-alb-stack';
 
 const projectName = 'unittest';
 const envName = 'test';
@@ -10,15 +10,15 @@ const defaultEnv = {
     region: 'ap-northeast-1',
 };
 
-test('SnapShot', () => {
+test('Snapshot', () => {
     // GIVEN
     const app = new App({
         context : {}
     });
-    const stack = new CloudfrontS3OacCognitoStack(app, 'CloudfrontS3OacCognitoStack', {
+    const stack = new CloudfrontVpcOriginAlbStack(app, 'CloudfrontVpcOriginAlbStack', {
         pjName: projectName,
         envName: envName,
-        description: 'Deliver S3 static website using OAC with CloudFront',
+        description: 'CloudFront with VPC Origin and ALB',
         isAutoDeleteObject: true,
         env: defaultEnv,
       });
@@ -30,4 +30,3 @@ test('SnapShot', () => {
     expect(template).toMatchSnapshot();
 
 });
-

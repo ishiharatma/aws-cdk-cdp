@@ -100,7 +100,7 @@ export class CloudFrontOACConstruct extends Construct {
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           compress: true,
-          origin: new origins.S3Origin(props.staticWebSiteS3.bucket),
+          origin: new origins.S3StaticWebsiteOrigin(props.staticWebSiteS3.bucket),
           originRequestPolicy: cloudfront.OriginRequestPolicy.CORS_S3_ORIGIN,
           responseHeadersPolicy
       },
