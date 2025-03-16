@@ -8,7 +8,7 @@ const app = new cdk.App();
 
 // environment identifier
 const envName: string = app.node.tryGetContext('env');
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 
 // env
 const defaultEnv = {
@@ -32,8 +32,8 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-const vpc = new VpcWithNatinstanceV2Stack(app, `VPCWithNATStack-${projectName}-${envName}`, {
-    pjName: projectName,
+const vpc = new VpcWithNatinstanceV2Stack(app, `VPCWithNATStack-${pjName}-${envName}`, {
+    pjName: pjName,
     envName: envName,
     vpcCIDR: '10.0.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
@@ -45,8 +45,8 @@ const vpc = new VpcWithNatinstanceV2Stack(app, `VPCWithNATStack-${projectName}-$
     terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
-new TestInstanceStack(app, `TestInstanceStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new TestInstanceStack(app, `TestInstanceStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   vpc: vpc.vpc,
   description: 'Create test instance',
@@ -55,5 +55,5 @@ new TestInstanceStack(app, `TestInstanceStack-${projectName}-${envName}`, {
 });
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

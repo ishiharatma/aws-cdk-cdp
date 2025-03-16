@@ -7,7 +7,7 @@ import {COLORS} from '../../common/constants';
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -38,8 +38,8 @@ const isTerminationProtection=false;
 
 console.log(`${COLORS.color_red}Origin Access ID (OAI) is legacy. Origin access control recommended.${COLORS.color_reset}`);
 
-new CloudFrontS3OaiStack(app, `CloudFrontS3OaiStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new CloudFrontS3OaiStack(app, `CloudFrontS3OaiStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   description: 'Deliver S3 static website using OAI(Legacy) with CloudFront',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -47,6 +47,6 @@ new CloudFrontS3OaiStack(app, `CloudFrontS3OaiStack-${projectName}-${envName}`, 
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
-// --------------------------------- Tagging  -------------------------------------y
-cdk.Tags.of(app).add('Project', projectName);
+// --------------------------------- Tagging  -------------------------------------
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

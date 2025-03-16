@@ -29,7 +29,7 @@ export class MyVpcStack extends cdk.Stack {
     const region:string = cdk.Stack.of(this).region;
     // VPC
     this.vpc = new ec2.Vpc(this, 'MyVpc', {
-      vpcName: [id, 'VPC', accountId].join('/') ,
+      vpcName: [props.pjName, props.envName, 'VPC', accountId].join('/') ,
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCIDR),
       maxAzs: props.maxAzs ?? 2, // 2 Availability Zones
       subnetConfiguration: [
@@ -69,7 +69,7 @@ export class MyVpcStack extends cdk.Stack {
     const flowLogKey = new kms.Key(this, 'Key', {
       enableKeyRotation: true,
       description: 'for VPC Flow log',
-      alias: `${id}-for-flowlog`,
+      alias: `${props.pjName}-${props.envName}-for-flowlog`,
     });
     new cdk.CfnOutput(this, 'KMSKeyId', {
       value: flowLogKey.keyId,
@@ -83,7 +83,7 @@ export class MyVpcStack extends cdk.Stack {
     );
     // S3 Bucket for FlowLogs
     const flowLogsBucket  = new s3.Bucket(this, 'FlowLogsBucket', {
-      bucketName: [id, 'flowlogs', accountId].join('.') ,
+      bucketName: [props.pjName, props.envName,'flowlogs', accountId].join('-') ,
       accessControl: s3.BucketAccessControl.PRIVATE,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,

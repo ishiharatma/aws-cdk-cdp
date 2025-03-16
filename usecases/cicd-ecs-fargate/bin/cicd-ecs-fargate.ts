@@ -6,7 +6,7 @@ import { CicdEcsFargateStack } from '../lib/cicd-ecs-fargate-stack';
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -35,22 +35,22 @@ const isAutoDeleteObject = true;
 const isTerminationProtection=false;
 
 new CicdEcsFargateStack(app, 'CicdEcsFargateStack', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   vpcId: `vpc-0a1b2c3d4e5f6g7h8`,
   repositoryAccountId: defaultEnv.account!,
-  repositoryName: `${projectName}-${envName}-webapi`,
-  repositoryArn: `arn:aws:codecommit:ap-northeast-1:${defaultEnv.account}:${projectName}-${envName}-webapi`,
+  repositoryName: `${pjName}-${envName}-webapi`,
+  repositoryArn: `arn:aws:codecommit:ap-northeast-1:${defaultEnv.account}:${pjName}-${envName}-webapi`,
   ecrRepositoryName: 'backend',
   ecsTaskDefArn: `arn:aws:ecs:${defaultEnv.region}:${defaultEnv.account}:task-definition/clusterName/ecsTaskDefName`,
   ecsClusterArn: `arn:aws:ecs:${defaultEnv.region}:${defaultEnv.account}:cluster/clusterName`,
   serviceName: `backend`,
   imageName: 'backend',
   branchName: envName,
-  artifactBucketArn: `arn:aws:s3:::${projectName}-${envName}-backend-artifact-${defaultEnv.account}`,
-  approvalTopicArn: `arn:aws:sns:${defaultEnv.region}:${defaultEnv.account}:${projectName}-${envName}-backend-approval`,
+  artifactBucketArn: `arn:aws:s3:::${pjName}-${envName}-backend-artifact-${defaultEnv.account}`,
+  approvalTopicArn: `arn:aws:sns:${defaultEnv.region}:${defaultEnv.account}:${pjName}-${envName}-backend-approval`,
   isApprovetage: true,
-  snsNoticeHandlerTopicArn: `arn:aws:sns:${defaultEnv.region}:${defaultEnv.account}:${projectName}-${envName}-notice`,
+  snsNoticeHandlerTopicArn: `arn:aws:sns:${defaultEnv.region}:${defaultEnv.account}:${pjName}-${envName}-notice`,
   deploymentTimeoutMinutes: 15,
   buildComputeType: 'SMALL',
 
@@ -60,5 +60,5 @@ new CicdEcsFargateStack(app, 'CicdEcsFargateStack', {
 });
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

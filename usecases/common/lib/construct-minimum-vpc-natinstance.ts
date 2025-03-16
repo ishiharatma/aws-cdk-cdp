@@ -1,6 +1,5 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
-import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
 import { 
   aws_s3 as s3,
   aws_ec2 as ec2, 
@@ -8,9 +7,8 @@ import {
   aws_kms as kms,
 } from 'aws-cdk-lib';
 
-interface MyVpcStackProps extends StackProps {
-  readonly pjName: string;
-  readonly envName: string;
+interface ConstructProps {
+  readonly vpcName: string;
   readonly vpcCIDR: string
   /**
    * Define the maximum number of AZs to use in this region
@@ -20,16 +18,16 @@ interface MyVpcStackProps extends StackProps {
   readonly isAutoDeleteObject: boolean;
 } 
 
-export class MyVpcStack extends cdk.Stack {
-  public readonly vpc: ec2.Vpc;
-  constructor(scope: Construct, id: string, props: MyVpcStackProps) {
-    super(scope, id, props);
+export class MinimumVpcNatInstance extends Construct {
+  public readonly vpc: ec2.IVpc;
+  constructor(scope: Construct, id: string, props: ConstructProps) {
+    super(scope, id);
+    const accountId = cdk.Stack.of(this).account;
+    const region = cdk.Stack.of(this).region;
 
-    const accountId:string = cdk.Stack.of(this).account;
-    const region:string = cdk.Stack.of(this).region;
     // VPC
-    this.vpc = new ec2.Vpc(this, 'MyVpc', {
-      vpcName: [props.pjName, props.envName, 'VPC', accountId].join('/') ,
+    this.vpc = new ec2.Vpc(this, 'default', {
+      vpcName: props.vpcName,
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCIDR),
       maxAzs: props.maxAzs ?? 2, // 2 Availability Zones
       subnetConfiguration: [
@@ -72,7 +70,7 @@ export class MyVpcStack extends cdk.Stack {
     // natSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp(), 'Allow all inbound traffic');
     natSecurityGroup.addIngressRule(ec2.Peer.ipv4(this.vpc.vpcCidrBlock), ec2.Port.allTcp(), 'Allow inbound traffic from VPC');
 
-    // // Allow outbound traffic
+    // Allow outbound traffic
     natSecurityGroup.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.allTcp(), 'Allow all outbound traffic');
 
     // NAT Instance
@@ -173,7 +171,7 @@ export class MyVpcStack extends cdk.Stack {
     const flowLogKey = new kms.Key(this, 'Key', {
       enableKeyRotation: true,
       description: 'for VPC Flow log',
-      alias: `${props.pjName}-${props.envName}-for-flowlog`,
+      alias: `${id.toLowerCase()}-for-flowlog`,
     });
     new cdk.CfnOutput(this, 'KMSKeyId', {
       value: flowLogKey.keyId,
@@ -187,7 +185,7 @@ export class MyVpcStack extends cdk.Stack {
     );
     // S3 Bucket for FlowLogs
     const flowLogsBucket  = new s3.Bucket(this, 'FlowLogsBucket', {
-      bucketName: [props.pjName, props.envName,'flowlogs', accountId].join('-') ,
+      bucketName: [id.toLowerCase(),'flowlogs', accountId].join('-') ,
       accessControl: s3.BucketAccessControl.PRIVATE,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,

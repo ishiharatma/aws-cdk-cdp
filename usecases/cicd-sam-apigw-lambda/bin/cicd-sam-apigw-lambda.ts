@@ -7,7 +7,7 @@ const app = new cdk.App();
 
 // environment identifier
 const envName: string = app.node.tryGetContext('env');
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 // env
 const defaultEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -36,8 +36,8 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new CicdSamApigwLambdaStack(app, `CicdSamApigwLambdaStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new CicdSamApigwLambdaStack(app, `CicdSamApigwLambdaStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   repositoryName: 'sam-apigw',
   repositoryRegion: 'ap-northeast-1',
@@ -47,5 +47,5 @@ new CicdSamApigwLambdaStack(app, `CicdSamApigwLambdaStack-${projectName}-${envNa
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

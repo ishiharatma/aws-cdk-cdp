@@ -8,7 +8,7 @@ const app = new cdk.App();
 
 // environment identifier
 const envName: string = app.node.tryGetContext('env');
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 
 // env
 const defaultEnv = {
@@ -33,7 +33,7 @@ const isAutoDeleteObject = true;
 const isTerminationProtection=false;
 
 new SessionManagerEc2OverVpceStack(app, 'SessionManagerEc2OverVpceStack', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   vpcCIDR: '10.0.0.0/16',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -43,5 +43,5 @@ new SessionManagerEc2OverVpceStack(app, 'SessionManagerEc2OverVpceStack', {
 });
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

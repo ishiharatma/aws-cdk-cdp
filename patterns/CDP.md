@@ -31,7 +31,7 @@ This is a sample repository of cloud design patterns using AWS CDK.
 - s3-static-web-site
   - ![](./usecases/s3-static-web-site/overview.drawio.svg)
 
-## Web Application Patterns
+## CloudFront Patterns
 
 - cloudfront-s3-oai (Legacy)
   - ![](./usecases/cloudfront-s3-oai/overview.drawio.svg)

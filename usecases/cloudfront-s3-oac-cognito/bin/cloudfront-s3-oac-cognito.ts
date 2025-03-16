@@ -6,7 +6,7 @@ import { CloudfrontS3OacCognitoStack } from '../lib/cloudfront-s3-oac-cognito-st
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -35,8 +35,8 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new CloudfrontS3OacCognitoStack(app, `CloudfrontS3OacCognitoStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new CloudfrontS3OacCognitoStack(app, `CloudfrontS3OacCognitoStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   description: 'Deliver S3 static website using OAC with CloudFront',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -45,5 +45,5 @@ new CloudfrontS3OacCognitoStack(app, `CloudfrontS3OacCognitoStack-${projectName}
 });
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

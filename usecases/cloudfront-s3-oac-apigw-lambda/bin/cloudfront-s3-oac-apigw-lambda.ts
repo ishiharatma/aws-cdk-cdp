@@ -7,7 +7,7 @@ import { WAFv2Stack } from '../lib/waf-stack';
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -38,7 +38,7 @@ const isTerminationProtection=false;
 
 // WAF on us-east1
 const wafStack  = new WAFv2Stack(app, '', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   description: 'CloudFront WAF.',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -47,8 +47,8 @@ const wafStack  = new WAFv2Stack(app, '', {
 });
 
 
-new CloudfrontS3OacApigwLambdaStack(app, `CloudfrontS3OacApigwLambdaStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new CloudfrontS3OacApigwLambdaStack(app, `CloudfrontS3OacApigwLambdaStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   description: 'Deliver S3 static website using OAC with CloudFront',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -58,5 +58,5 @@ new CloudfrontS3OacApigwLambdaStack(app, `CloudfrontS3OacApigwLambdaStack-${proj
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

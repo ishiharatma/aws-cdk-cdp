@@ -6,7 +6,7 @@ import { EcrContinuousScanStack } from '../lib/ecr-continuous-scan-stack';
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -36,7 +36,7 @@ const isTerminationProtection=false;
 
 new EcrContinuousScanStack(app, 'EcrContinuousScanStack', {
   input:{
-    pjName: projectName,
+    pjName: pjName,
     envName: envName,
     isAutoDeleteObject: isAutoDeleteObject,
     lambdaLogLevel: 'INFO',
@@ -46,3 +46,6 @@ new EcrContinuousScanStack(app, 'EcrContinuousScanStack', {
   env: defaultEnv,
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
+// --------------------------------- Tagging  -------------------------------------
+cdk.Tags.of(app).add('Project', pjName);
+cdk.Tags.of(app).add('Environment', envName);

@@ -53,7 +53,7 @@ export class BucketConstruct extends Construct {
       const isPublicReadAccess: boolean = props.isPublicReadAccess ?? false;
 
       this.bucket = new s3.Bucket(this, 'S3Bucket', {
-          bucketName: bucketNames.join('.'),
+          bucketName: bucketNames.join('-'),
           encryption: s3.BucketEncryption.S3_MANAGED,
           blockPublicAccess: new cdk.aws_s3.BlockPublicAccess({
               blockPublicAcls: !isPublicReadAccess,

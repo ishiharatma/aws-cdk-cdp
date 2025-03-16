@@ -6,7 +6,7 @@ import { S3StaticWebSiteStack } from '../lib/s3-static-web-site-stack';
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -39,8 +39,8 @@ const isTerminationProtection=false;
 // e.g.) ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  ['192.0.2.1/32','192.0.2.2/32']; 
 const ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  [];
 
-new S3StaticWebSiteStack(app, `S3StaticWebSiteStack-${projectName}-${envName}`, {
-  pjName: projectName,
+new S3StaticWebSiteStack(app, `S3StaticWebSiteStack-${pjName}-${envName}`, {
+  pjName: pjName,
   envName: envName,
   description: '',
   isAutoDeleteObject: isAutoDeleteObject,
@@ -49,5 +49,5 @@ new S3StaticWebSiteStack(app, `S3StaticWebSiteStack-${projectName}-${envName}`, 
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

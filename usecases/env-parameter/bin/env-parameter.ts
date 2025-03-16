@@ -16,7 +16,7 @@ const color_reset: string = '\u001b[0m';
 // 環境識別子の指定
 
 // environment identifier
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
 
 // env
@@ -37,7 +37,7 @@ const uswest2Env = {
 };
 
 // 環境別設定ファイルの読み込み
-const envVals: IYamlProps = loadConfig(`./parameters/${projectName}-${envName}.yaml`);
+const envVals: IYamlProps = loadConfig(`./parameters/${pjName}-${envName}.yaml`);
 
 const isProduction:boolean = envName.match(/^(prod|jump)$/) ? true: false;
 if (isProduction) {
@@ -50,7 +50,7 @@ console.log('JSON全て出力')
 console.log(envVals);
 
 console.log('JSONの特定の要素を取り出します')
-console.log(`ProjectName: ${envVals.PJName}`);
+console.log(`pjName: ${envVals.PJName}`);
 console.log(`Description: ${envVals.Description}`);
 console.log(`IsNatInstance: ${envVals.MyVPC.IsNatInstance}`);
 console.log(`NatInstanceType: ${envVals.MyVPC.NatInstanceType ?? 't4g.micro'}`);

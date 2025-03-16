@@ -55,6 +55,6 @@ new Ec2PgadminDockerStack(app, `Ec2PgadminDockerStack-${pjName}-${envName}`, {
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
-// --------------------------------- Tagging  -------------------------------------y
+// --------------------------------- Tagging  -------------------------------------
 cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

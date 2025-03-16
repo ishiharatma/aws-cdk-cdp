@@ -10,7 +10,7 @@ const app = new cdk.App();
 
 // environment identifier
 const envName: string = app.node.tryGetContext('env');
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
 const myIP: string = app.node.tryGetContext('myip') ?? '0.0.0.0/0'; // my Public IPaddress
 
 // env
@@ -46,7 +46,7 @@ const remoteCIDR = '10.0.0.0/16'; // VPC-AWS
 const localCIDR = '192.168.0.0/16'; // VPC-OnPremises
 
 const vpc = new VPCStack(app, 'myVPC', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   vpcCIDR: remoteCIDR,
   isAutoDeleteObject: isAutoDeleteObject,
@@ -56,7 +56,7 @@ const vpc = new VPCStack(app, 'myVPC', {
 });
 
 const onpremisesVpc = new OnPremVPCStack(app, 'onpremisesVpc', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   vpcCIDR: localCIDR,
   myIP: myIP,
@@ -68,7 +68,7 @@ const onpremisesVpc = new OnPremVPCStack(app, 'onpremisesVpc', {
 })
 
 new SiteToSiteSampleStack(app, 'SiteToSiteSampleStack', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   transitGatewayId: '',
   vpnGatewayId: cdk.Token.asString(vpc._vpc.vpnGatewayId) ,
@@ -79,5 +79,5 @@ new SiteToSiteSampleStack(app, 'SiteToSiteSampleStack', {
 });
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

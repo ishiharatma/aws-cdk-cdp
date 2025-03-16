@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ishiharatma/aws-cdk-cdp#readme",
   "private": true,
+  "npmClient": "npm",
   "workspaces": [
     "usecases\\*"
   ],

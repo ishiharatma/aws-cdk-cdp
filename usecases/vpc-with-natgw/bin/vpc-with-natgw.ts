@@ -8,7 +8,13 @@ const app = new cdk.App();
 
 // environment identifier
 const envName: string = app.node.tryGetContext('env');
-const projectName: string = app.node.tryGetContext('project');
+const pjName: string = app.node.tryGetContext('project');
+
+const envNames: string[] = ['dev', 'test', 'stage', 'prod'];
+if (!envNames.includes(envName)) {
+  console.error(`Invalid environment specified. Please use one of the following: ${envNames.join(', ')}.`);
+  process.exit(1);
+}
 
 // env
 const defaultEnv = {
@@ -32,8 +38,8 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-const vpc = new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
-    pjName: projectName,
+const vpc = new MyVpcStack(app, `VPCWithNATGWStack-${pjName}-${envName}`, {
+    pjName: pjName,
     envName: envName,
     vpcCIDR: '10.1.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
@@ -42,16 +48,16 @@ const vpc = new MyVpcStack(app, `VPCWithNATGWStack-${projectName}-${envName}`, {
     terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
-new TestInstanceStack(app, `TestInstanceStack-${projectName}-${envName}`, {
-  pjName: projectName,
-  envName: envName,
-  vpc: vpc.vpc,
-  description: 'Create test instance',
-  env: defaultEnv,
-  terminationProtection: isTerminationProtection, // Enabling deletion protection
-});
+//new TestInstanceStack(app, `TestInstanceStack-${pjName}-${envName}`, {
+//  pjName: pjName,
+//  envName: envName,
+//  vpc: vpc.vpc,
+//  description: 'Create test instance',
+//  env: defaultEnv,
+//  terminationProtection: isTerminationProtection, // Enabling deletion protection
+//});
 
 
 // --------------------------------- Tagging  -------------------------------------
-cdk.Tags.of(app).add('Project', projectName);
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

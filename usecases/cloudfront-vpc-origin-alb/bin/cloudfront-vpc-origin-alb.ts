@@ -6,7 +6,7 @@ import { CloudfrontVpcOriginAlbStack } from '../lib/cloudfront-vpc-origin-alb-st
 const app = new cdk.App();
 
 // environment identifier
-const projectName: string = "sample"; //app.node.tryGetContext('project');
+const pjName: string = "sample"; //app.node.tryGetContext('project');
 const envName: string = "dev"; //app.node.tryGetContext('env');
 // env
 const defaultEnv = {
@@ -35,7 +35,7 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 new CloudfrontVpcOriginAlbStack(app, 'CloudfrontVpcOriginAlbStack', {
-  pjName: projectName,
+  pjName: pjName,
   envName: envName,
   prefixList: "pl-58a04531",
   description: 'CloudFront with VPC Origin and ALB',
@@ -44,6 +44,6 @@ new CloudfrontVpcOriginAlbStack(app, 'CloudfrontVpcOriginAlbStack', {
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
 
-// --------------------------------- Tagging  -------------------------------------y
-cdk.Tags.of(app).add('Project', projectName);
+// --------------------------------- Tagging  -------------------------------------
+cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);
