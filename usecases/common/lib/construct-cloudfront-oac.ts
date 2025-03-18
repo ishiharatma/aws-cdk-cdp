@@ -14,6 +14,7 @@ interface CloudFrontConstructProps {
   readonly envName: string;
   readonly domainName?: string;
   readonly staticWebSiteS3: BucketConstruct;
+  readonly errorS3?: BucketConstruct;
   readonly enableS3ListBucket?: boolean;
   readonly cloudFrontAccessLogsBucket?: BucketConstruct;
   readonly cloudFrontLogFilePrefix?: string;
@@ -31,7 +32,6 @@ export class CloudFrontOACConstruct extends Construct {
 
     const accountId = cdk.Stack.of(this).account;
     const region = cdk.Stack.of(this).region;
-
 
     const responseHeadersPolicy = new cloudfront.ResponseHeadersPolicy(
         this,
@@ -80,7 +80,7 @@ export class CloudFrontOACConstruct extends Construct {
           },
         }
       );
-    this.distribution = new cloudfront.Distribution(this,'CloudFront',{
+    this.distribution = new cloudfront.Distribution(this,'Distribution',{
       comment: props.cloudFrontComment ?? undefined,
       enabled: true,
       webAclId: props.waf ? props.waf.webACL.attrArn : undefined, 
@@ -100,7 +100,7 @@ export class CloudFrontOACConstruct extends Construct {
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           compress: true,
-          origin: new origins.S3StaticWebsiteOrigin(props.staticWebSiteS3.bucket),
+          origin: origins.S3BucketOrigin.withOriginAccessControl(props.staticWebSiteS3.bucket),
           originRequestPolicy: cloudfront.OriginRequestPolicy.CORS_S3_ORIGIN,
           responseHeadersPolicy
       },
@@ -118,42 +118,42 @@ export class CloudFrontOACConstruct extends Construct {
           responsePagePath: "/error.html",
         },
       ],
-      enableLogging: true,
-      logBucket: props.cloudFrontAccessLogsBucket?.bucket,
-      logFilePrefix: props.cloudFrontLogFilePrefix,
+      enableLogging: props.cloudFrontAccessLogsBucket ? true: false,
+      logBucket: props.cloudFrontAccessLogsBucket ? props.cloudFrontAccessLogsBucket.bucket : undefined,
+      logFilePrefix: props.cloudFrontLogFilePrefix ?? undefined,
     });
-    // OAC
-    const cfnOriginAccessControl = new cdk.aws_cloudfront.CfnOriginAccessControl(
-        this,
-        "OriginAccessControl",
-        {
-          originAccessControlConfig: {
-            name: "Origin Access Control for Website Bucket",
-            originAccessControlOriginType: "s3",
-            signingBehavior: "always",
-            signingProtocol: "sigv4",
-          },
-        }
-    );
-    const cfnDistribution = this.distribution.node
-      .defaultChild as cdk.aws_cloudfront.CfnDistribution;
-
-    // Set OAC
-    cfnDistribution.addPropertyOverride(
-      "DistributionConfig.Origins.0.OriginAccessControlId",
-      cfnOriginAccessControl.attrId
-    );
-    // Set S3 domain name
-    cfnDistribution.addPropertyOverride(
-      "DistributionConfig.Origins.0.DomainName",
-      props.staticWebSiteS3.bucket.bucketRegionalDomainName
-    );
-
-    // Delete OAI
-    cfnDistribution.addPropertyOverride(
-      "DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity",
-      ""
-    );
+//    // OAC
+//    const cfnOriginAccessControl = new cdk.aws_cloudfront.CfnOriginAccessControl(
+//        this,
+//        "OriginAccessControl",
+//        {
+//          originAccessControlConfig: {
+//            name: "Origin Access Control for Website Bucket",
+//            originAccessControlOriginType: "s3",
+//            signingBehavior: "always",
+//            signingProtocol: "sigv4",
+//          },
+//        }
+//    );
+//    const cfnDistribution = this.distribution.node
+//      .defaultChild as cdk.aws_cloudfront.CfnDistribution;
+//
+//    // Set OAC
+//    cfnDistribution.addPropertyOverride(
+//      "DistributionConfig.Origins.0.OriginAccessControlId",
+//      cfnOriginAccessControl.attrId
+//    );
+//    // Set S3 domain name
+//    cfnDistribution.addPropertyOverride(
+//      "DistributionConfig.Origins.0.DomainName",
+//      props.staticWebSiteS3.bucket.bucketRegionalDomainName
+//    );
+//
+//    // Delete OAI
+//    cfnDistribution.addPropertyOverride(
+//      "DistributionConfig.Origins.0.S3OriginConfig.OriginAccessIdentity",
+//      ""
+//    );
     // Bucket policy
     props.staticWebSiteS3.bucket.addToResourcePolicy(
         new cdk.aws_iam.PolicyStatement({

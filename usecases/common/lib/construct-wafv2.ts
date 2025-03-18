@@ -4,15 +4,13 @@ import {
     aws_wafv2 as wafv2,
     aws_s3 as s3,
 } from 'aws-cdk-lib';
-import { BucketConstruct } from './construct-bucket';
+import { BucketConstruct } from "./construct-bucket";
 import { listOfWAFRules } from '../interface/index';
 
 interface WAFProps {
   readonly pjName: string;
   readonly envName: string;
   readonly webACLNameSuffix: string;
-  //readonly domainName: string;
-  //readonly hostedZoneId: string;
   /**
    * @default - false
    */
@@ -117,7 +115,7 @@ export class WAFv2Construct extends Construct {
     ];
 
     const whitelist = props.enableWhitelist
-        ? new wafv2.CfnIPSet(this,'whitelist',{
+        ? new wafv2.CfnIPSet(this,'WhiteList',{
                 name: [props.pjName, props.envName, 'whitelist'].join('-'),
                 scope: "CLOUDFRONT",
                 ipAddressVersion: props.isIPv6 ? "IPV6": "IPV4",
@@ -126,7 +124,7 @@ export class WAFv2Construct extends Construct {
         : undefined
     ;
 
-    const blacklist = new wafv2.CfnIPSet(this,'blacklist',{
+    const blacklist = new wafv2.CfnIPSet(this,'BlackList',{
         name: [props.pjName, props.envName, 'blacklist'].join('-'),
         scope: "CLOUDFRONT",
         ipAddressVersion: props.isIPv6 ? "IPV6": "IPV4",
@@ -140,7 +138,7 @@ export class WAFv2Construct extends Construct {
             // ブラックリストのIPに該当したら Block
             name: "Custom-IPaddress-BlackList",
             priority: 1,
-            overrideAction: overrideAction,
+            //overrideAction: overrideAction,
             statement: {
               ipSetReferenceStatement: {
                 arn: blacklist.attrArn,
@@ -158,7 +156,7 @@ export class WAFv2Construct extends Construct {
             name: "Custom-Ratebased-100",
             action: {block: {}},
             priority: 2,
-            overrideAction: overrideAction,
+            //overrideAction: overrideAction,
             statement: {
               rateBasedStatement: {
                 aggregateKeyType: "IP",
@@ -177,7 +175,7 @@ export class WAFv2Construct extends Construct {
         var rule: wafv2.CfnWebACL.RuleProperty = {
             name: "Custom-IPaddress-WhiteList",
             priority: 1000,
-            overrideAction: overrideAction,
+            //overrideAction: overrideAction,
             action: { allow: {} },
             statement: {
               ipSetReferenceStatement: {
@@ -219,132 +217,7 @@ export class WAFv2Construct extends Construct {
         webACLRules.push(rule);
     });// forEach
 
-/*
-    var rule: wafv2.CfnWebACL.RuleProperty = {
-        // capacity = 25
-        // ボットやその他の脅威に関連付けられている IP アドレスをブロックするルール
-        // IP アドレスは AWS によって管理されています。
-        name: "AWSManagedRulesAmazonIpReputationList",
-        priority: 12,
-        statement: {
-          managedRuleGroupStatement: {
-            vendorName: "AWS",
-            name: "AWSManagedRulesAmazonIpReputationList",
-          },
-        },
-        overrideAction: { none: {} },
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          sampledRequestsEnabled: true,
-          metricName: ["AWSManagedRulesAmazonIpReputationList"].join('-'),
-        },
-    };
-    webACLRules.push(rule);
-    var rule: wafv2.CfnWebACL.RuleProperty = {
-        // capacity = 50
-        // 匿名 IP リストルールグループには、ビューワー ID の難読化を許可するサービスからのリクエストをブロックするルール
-        name: "AWSManagedRulesAnonymousIpList",
-        priority: 13,
-        statement: {
-          managedRuleGroupStatement: {
-            vendorName: "AWS",
-            name: "AWSManagedRulesAnonymousIpList",
-            //scopeDownStatement: {
-            //  notStatement: {
-            //    statement: {
-            //      ipSetReferenceStatement: {
-            //        arn: whitelist.attrArn
-            //      }  
-            //    }
-            //  }
-            //}
-          },
-        },
-        overrideAction: { none: {} },
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          sampledRequestsEnabled: true,
-          metricName: ["AWSManagedRulesAnonymousIpList"].join('-'),
-        },
-    };
-    webACLRules.push(rule);
-    var rule: wafv2.CfnWebACL.RuleProperty = {
-        // capacity = 700
-        // Web アプリケーション防御の一般的なルール
-        name: "AWSManagedRulesCommonRuleSet",
-        priority: 14,
-        statement: {
-          managedRuleGroupStatement: {
-            vendorName: "AWS",
-            name: "AWSManagedRulesCommonRuleSet",
-            //scopeDownStatement: {
-            //  notStatement: {
-            //    statement: {
-            //      ipSetReferenceStatement: {
-            //        arn: whitelist.attrArn
-            //      }  
-            //    }
-            //  }
-            //},
-            // Excluding generic RFI body rule for sns notifications
-            // https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list.html
-            //excludedRules: [
-            //  {name: "GenericRFI_BODY"},
-            //  {name: "SizeRestrictions_BODY"},
-            //]
-          },
-        },
-        overrideAction: { none: {} },
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          sampledRequestsEnabled: true,
-          metricName: ["AWSManagedRulesCommonRuleSet"].join('-'),
-        },
-    };
-    webACLRules.push(rule);
-    var rule: wafv2.CfnWebACL.RuleProperty = {
-        // capacity = 700
-        // Web アプリケーション防御の一般的なルール
-        // capacity = 200
-        // 脆弱性や悪用のあるパターンに報告されているインプットをブロックするルール
-        name: "AWSManagedRulesKnownBadInputsRuleSet",
-        priority: 15,
-        statement: {
-          managedRuleGroupStatement: {
-            vendorName: "AWS",
-            name: "AWSManagedRulesKnownBadInputsRuleSet",
-          },
-        },
-        overrideAction: { none: {} },
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          sampledRequestsEnabled: true,
-          metricName: ["AWSManagedRulesKnownBadInputsRuleSet"].join('-'),
-        },
-    };
-    webACLRules.push(rule);
-    var rule: wafv2.CfnWebACL.RuleProperty = {
-        // capacity = 200
-        // SQL Database ルールグループには、SQL インジェクション攻撃などの SQL データベースの悪用に関連するリクエストパターンをブロックするルール
-        name: "AWSManagedRulesSQLiRuleSet",
-        priority: 16,
-        statement: {
-          managedRuleGroupStatement: {
-            vendorName: "AWS",
-            name: "AWSManagedRulesSQLiRuleSet",
-          },
-        },
-        overrideAction: { none: {} },
-        visibilityConfig: {
-          cloudWatchMetricsEnabled: true,
-          sampledRequestsEnabled: true,
-          metricName: ["AWSManagedRulesSQLiRuleSet"].join('-'),
-        },
-    };
-    webACLRules.push(rule);
-*/
-
-    this.webACL = new wafv2.CfnWebACL(this,'wafv2',{
+    this.webACL = new wafv2.CfnWebACL(this,'WebACL',{
         name:  WebACLName,
         scope: "CLOUDFRONT",
         defaultAction: props.enableWhitelist ? {block: {}} : {allow: {}}, // ホワイトリスト使用の場合はデフォルト BLOCK
@@ -365,40 +238,32 @@ export class WAFv2Construct extends Construct {
         envName: props.envName,
         bucketPrefix: 'aws-waf-logs',
         bucketSuffix: props.webACLNameSuffix,
-        isAutoDeleteObject: props.isAutoDeleteObject,
+        isAutoDeleteObject: props.isAutoDeleteObject ?? false,
         accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
+        enforceSSL: true,
         lifecycleRules: [
           {
             expirationDays: 90,
-            abortIncompleteMultipartUploadAfterDays: 7
+            abortIncompleteMultipartUploadAfterDays: 7,
+            transitions: [
+              {
+                  storageClass: s3.StorageClass.INTELLIGENT_TIERING, // (S3 標準 – IT)
+                  transitionAfter: cdk.Duration.days(0),
+              },
+              /*
+              {
+                  storageClass: s3.StorageClass.GLACIER, // S3 Glacier Flexible Retrieval (旧 S3 Glacier)
+                  transitionAfter: cdk.Duration.days(props.S3LogsBucketArchiveDays ?? 90),
+              },
+              */
+            ],
           }
         ]
       });
-      new cdk.CfnOutput(this, "wafLogS3BucketName", {
+      new cdk.CfnOutput(this, "WafLogS3BucketName", {
           value: wafLogsBucket.bucket.bucketName,
           description: "WAF Log S3Bucket name.",
           //exportName: "WafLogS3BucketName"
-      });
-      // Lifecycle
-      wafLogsBucket.bucket.addLifecycleRule({
-          expiration: cdk.Duration.days(props.S3LogsBucketExpirationDays ?? 365),
-          abortIncompleteMultipartUploadAfter: cdk.Duration.days(7), // 不完全なマルチパートアップロードの削除
-          transitions: [
-            {
-                storageClass: s3.StorageClass.INTELLIGENT_TIERING, // (S3 標準 – IT)
-                transitionAfter: cdk.Duration.days(0),
-            },
-          /*
-          {
-              storageClass: s3.StorageClass.INFREQUENT_ACCESS, // 低頻度アクセス (S3 標準 – IA)
-              transitionAfter: cdk.Duration.days(props.S3LogsBucketIADays ?? 30),
-          },
-          */
-          {
-              storageClass: s3.StorageClass.GLACIER, // S3 Glacier Flexible Retrieval (旧 S3 Glacier)
-              transitionAfter: cdk.Duration.days(props.S3LogsBucketArchiveDays ?? 90),
-          },
-          ],
       });
       // WAF ログ出力設定
       const logConfig = new wafv2.CfnLoggingConfiguration(
@@ -410,12 +275,56 @@ export class WAFv2Construct extends Construct {
         }
       );
       logConfig.addDependency(this.webACL);
+
+      // 1. まずバケットの作成を待つ
+      logConfig.addDependency(wafLogsBucket.bucket.node.defaultChild as cdk.CfnResource);
+      // 2. バケットポリシーの作成を待つ（存在する場合）
+      if (wafLogsBucket.bucket.policy) {
+        const cfnBucketPolicy = wafLogsBucket.bucket.policy.node.defaultChild as cdk.CfnResource;
+        logConfig.addDependency(cfnBucketPolicy);
+      }
+      // 3. Auto Delete Objects の関連リソースを待つ
+      if (props.isAutoDeleteObject) {
+        const { customResource, handler } = this._findCustomResource('S3AutoDeleteObjects','CustomS3AutoDeleteObjectsCustomResourceProviderHandler');
+        
+        if (customResource) {
+          const cfnCustomResource = customResource.node.defaultChild as cdk.CfnResource;
+          if (cfnCustomResource) {
+            logConfig.addDependency(cfnCustomResource);
+          }
+        }
+  
+        if (handler) {
+          logConfig.addDependency(handler);
+        }
+      }
       logConfig.addDependency(wafLogsBucket.bucket.node.defaultChild as cdk.CfnResource);
     }
-    new cdk.CfnOutput(this, "wafAclCloudFrontArn", {
+    new cdk.CfnOutput(this, "WafAclCloudFrontArn", {
         value: this.webACL.attrArn,
         description: "WAF CloudFront arn",
         //exportName: "WafAclCloudFrontArn"
     });
   }
+
+    // Auto Delete Objects の関連リソースを探索
+    private _findCustomResource = (customIncludes: string, handlerIncludes: string) => {
+      // カスタムリソースを探索
+      const customResources = this.node.findAll().filter(child => {
+        return child.node.path.includes(customIncludes) && 
+              child instanceof cdk.CustomResource;
+      });
+      
+      // Lambda Handler を探索
+      const handlers = this.node.findAll().filter(child => {
+        return child.node.path.includes(handlerIncludes) &&
+              child instanceof cdk.CfnResource;
+      });
+
+      return {
+        customResource: customResources[0] as cdk.CustomResource,
+        handler: handlers[0] as cdk.CfnResource
+      };
+    };
+
 }
