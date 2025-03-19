@@ -65,7 +65,8 @@ export class MyVpcStack extends cdk.Stack {
     // Security Hub EC2.6
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-6
     // FlowLog
-    // CMK
+    // (Optional)CMK
+    /*
     const flowLogKey = new kms.Key(this, 'Key', {
       enableKeyRotation: true,
       description: 'for VPC Flow log',
@@ -81,14 +82,17 @@ export class MyVpcStack extends cdk.Stack {
         resources: ['*'],
       }),
     );
+    */
     // S3 Bucket for FlowLogs
     const flowLogsBucket  = new s3.Bucket(this, 'FlowLogsBucket', {
       bucketName: [props.pjName, props.envName,'flowlogs', accountId].join('-') ,
       accessControl: s3.BucketAccessControl.PRIVATE,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-      encryption: s3.BucketEncryption.KMS, // s3.BucketEncryption.S3_MANAGED
-      encryptionKey: flowLogKey,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      // Optional if you want to use CMK
+      //encryption: s3.BucketEncryption.KMS,
+      //encryptionKey: flowLogKey,
       removalPolicy: props.isAutoDeleteObject ? cdk.RemovalPolicy.DESTROY: cdk.RemovalPolicy.RETAIN, // Delete if isAutoDeleteObject is true, otherwise do not delete
       autoDeleteObjects: props.isAutoDeleteObject,
     });
@@ -99,6 +103,12 @@ export class MyVpcStack extends cdk.Stack {
     this.vpc.addFlowLog('FlowLogs', {
       destination: ec2.FlowLogDestination.toS3(flowLogsBucket),
       trafficType: ec2.FlowLogTrafficType.ALL,
+    });
+    // Gateway 型 VPC エンドポイント
+    // VPC Endpoint for S3
+    this.vpc.addGatewayEndpoint('S3VPCE',{
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+      subnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }], // (CDK v2.69 deprecated)PRIVATE_WITH_NAT
     });
 
   }

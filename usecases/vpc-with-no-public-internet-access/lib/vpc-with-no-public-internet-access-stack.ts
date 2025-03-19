@@ -1,5 +1,7 @@
-import { Construct } from 'constructs';
+
+import { Stack, StackProps } from 'aws-cdk-lib';
 import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
 import { 
   aws_s3 as s3,
   aws_ec2 as ec2, 
@@ -7,44 +9,36 @@ import {
   aws_kms as kms,
 } from 'aws-cdk-lib';
 
-interface ConstructProps {
-  readonly vpcName: string;
+interface MyVpcStackProps extends StackProps {
+  readonly pjName: string;
+  readonly envName: string;
   readonly vpcCIDR: string
   /**
    * Define the maximum number of AZs to use in this region
    * @default 2 AZ
    */
   readonly maxAzs?: number;
-  /**
-   * Define the number of NAT Gateways to use in this region
-   * @default 1 NAT Gateway
-   */
-  readonly natGateways?: number;
   readonly isAutoDeleteObject: boolean;
 } 
 
-export class MinimumVpcNatGw extends Construct {
+export class VpcWithNoPublicInternetAccessStack extends cdk.Stack {
   public readonly vpc: ec2.IVpc;
-  constructor(scope: Construct, id: string, props: ConstructProps) {
-    super(scope, id);
-    const accountId = cdk.Stack.of(this).account;
-    const region = cdk.Stack.of(this).region;
+  constructor(scope: Construct, id: string, props: MyVpcStackProps) {
+    super(scope, id, props);
 
+    const accountId:string = cdk.Stack.of(this).account;
+    const region:string = cdk.Stack.of(this).region;
     // VPC
-    this.vpc = new ec2.Vpc(this, 'default', {
-      vpcName: props.vpcName,
+    this.vpc = new ec2.Vpc(this, 'MyVpc', {
+      vpcName: [props.pjName, props.envName, 'VPC', accountId].join('/') ,
       ipAddresses: ec2.IpAddresses.cidr(props.vpcCIDR),
       maxAzs: props.maxAzs ?? 2, // 2 Availability Zones
+      createInternetGateway: false, // No Internet Gateway
       subnetConfiguration: [
         {
           cidrMask: 24,
-          name: 'PublicSubnet',
-          subnetType: ec2.SubnetType.PUBLIC,
-        },
-        {
-          cidrMask: 24,
           name: 'PrivateSubnet',
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS, // PRIVATE_WITH_NAT: deprecated
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         {
           cidrMask: 24,
@@ -52,31 +46,21 @@ export class MinimumVpcNatGw extends Construct {
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
       ],
-      natGateways: props.natGateways ?? 1,
-      natGatewaySubnets: {subnetType: ec2.SubnetType.PUBLIC},
-      natGatewayProvider: ec2.NatProvider.gateway(),
+      natGateways: 0, // No NAT Gateway
       // Security Hub EC2.2
       // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-2
       restrictDefaultSecurityGroup: true, 
     });
 
-    // Output the NAT Gateway public IP address
-    const natIps:string[] = this._getNatgwPublivIp(this.vpc)
-    natIps.forEach((ip, i) => {
-      new cdk.CfnOutput(this, `natGwPublicIp${i}`, {
-          value: ip,
-          exportName: `natGwPublicIp${i}`,
-      }).node.addDependency(this.vpc);
-    });
-
-    // Security Hub EC2.6 
+    // Security Hub EC2.6
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-6
     // FlowLog
-    // CMK
+    // (Optional)CMK
+    /*
     const flowLogKey = new kms.Key(this, 'Key', {
       enableKeyRotation: true,
       description: 'for VPC Flow log',
-      alias: `${id.toLowerCase()}-for-flowlog`,
+      alias: `${props.pjName}-${props.envName}-for-flowlog`,
     });
     new cdk.CfnOutput(this, 'KMSKeyId', {
       value: flowLogKey.keyId,
@@ -88,14 +72,17 @@ export class MinimumVpcNatGw extends Construct {
         resources: ['*'],
       }),
     );
+    */
     // S3 Bucket for FlowLogs
     const flowLogsBucket  = new s3.Bucket(this, 'FlowLogsBucket', {
-      bucketName: [id.toLowerCase(),'flowlogs', accountId].join('-') ,
+      bucketName: [props.pjName, props.envName,'flowlogs', accountId].join('-') ,
       accessControl: s3.BucketAccessControl.PRIVATE,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
-      encryption: s3.BucketEncryption.KMS, // s3.BucketEncryption.S3_MANAGED
-      encryptionKey: flowLogKey,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      // Optional if you want to use CMK
+      //encryption: s3.BucketEncryption.KMS,
+      //encryptionKey: flowLogKey,
       removalPolicy: props.isAutoDeleteObject ? cdk.RemovalPolicy.DESTROY: cdk.RemovalPolicy.RETAIN, // Delete if isAutoDeleteObject is true, otherwise do not delete
       autoDeleteObjects: props.isAutoDeleteObject,
     });
@@ -107,40 +94,14 @@ export class MinimumVpcNatGw extends Construct {
       destination: ec2.FlowLogDestination.toS3(flowLogsBucket),
       trafficType: ec2.FlowLogTrafficType.ALL,
     });
+
     // Gateway 型 VPC エンドポイント
     // VPC Endpoint for S3
     this.vpc.addGatewayEndpoint('S3VPCE',{
       service: ec2.GatewayVpcEndpointAwsService.S3,
       subnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }], // (CDK v2.69 deprecated)PRIVATE_WITH_NAT
     });
+
   }
-
-  /*
-  * Get NAT Gateway public IP address
-  * @param vpc: ec2.IVpc
-  * @return string[] list of public IP addresses
-  */
-  private _getNatgwPublivIp = (vpc: ec2.IVpc): string[] => {
-    // VPC内のNAT Gatewayを全て取得
-    const natgws = vpc.node.findAll().filter(
-        (child) => child instanceof ec2.CfnNatGateway
-    ) as ec2.CfnNatGateway[];
-
-    // NAT GatewayのallocationIdを取得
-    const allocIds = natgws.map(gw => gw.allocationId);
-
-    // Elastic Ipを全て取得
-    const eips = vpc.node.findAll().filter(
-        (child) => child instanceof ec2.CfnEIP
-    ) as ec2.CfnEIP[];
-
-    // NAT Gatewayに付与されているパブリックIPアドレスを取得
-    const ips = eips
-        .filter(eip => allocIds.includes(eip.attrAllocationId))
-        .map(eip => eip.attrPublicIp);
-
-    return ips;
-  };
-
 }
 

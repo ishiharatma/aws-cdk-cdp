@@ -202,6 +202,12 @@ export class MinimumVpcNatInstance extends Construct {
       destination: ec2.FlowLogDestination.toS3(flowLogsBucket),
       trafficType: ec2.FlowLogTrafficType.ALL,
     });
+    // Gateway 型 VPC エンドポイント
+    // VPC Endpoint for S3
+    this.vpc.addGatewayEndpoint('S3VPCE',{
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+      subnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }], // (CDK v2.69 deprecated)PRIVATE_WITH_NAT
+    });
 
   }
 }
