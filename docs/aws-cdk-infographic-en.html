@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS CDK Graphic Recording Style Infographic</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol&family=Yomogi&family=Zen+Kurenaido&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+    :root {
+      --ui-color-1: #1B6C8C;
+      --ui-color-2: #BF8136;
+      --ui-color-3: #F2E8E4;
+      --ui-color-4: #260101;
+      --ui-color-5: #BF5656;
+    }
+
+    body {
+      font-family: 'Zen Kurenaido', sans-serif;
+      background-color: #FFF8F5;
+      color: #333333;
+      line-height: 1.5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 2000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeInScale 1s ease-out;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      color: #333333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .header-date {
+      font-size: 14px;
+      color: #777777;
+    }
+
+    .section-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .section-card {
+      flex: 1;
+      min-width: 220px;
+      max-width: 450px;
+      background-color: white;
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInScale 0.6s ease-out;
+    }
+
+    .mega-icon-container {
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .card-content {
+      padding: 0 10px 15px;
+    }
+
+    .keyword-list {
+      margin: 15px 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .keyword-list li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .keyword-list li i {
+      margin-right: 8px;
+      color: var(--ui-color-2);
+      min-width: 16px;
+    }
+
+    .keyword-tag {
+      background-color: var(--ui-color-3);
+      color: var(--ui-color-4);
+      padding: 3px 8px;
+      border-radius: 5px;
+      margin-right: 5px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .speech-bubble {
+      position: relative;
+      background: #fff;
+      border: 3px solid var(--ui-color-1);
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin: 15px 5px;
+      font-family: 'Yomogi', cursive;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+      transform: rotate(-1deg);
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      left: 20px;
+      border-width: 12px 8px 0;
+      border-style: solid;
+      border-color: var(--ui-color-1) transparent;
+      display: block;
+      width: 0;
+    }
+
+    .speech-bubble.right::after {
+      left: auto;
+      right: 20px;
+      transform: rotate(15deg);
+    }
+
+    .speech-bubble.top::after {
+      bottom: auto;
+      top: -13px;
+      border-width: 0 8px 12px;
+      transform: rotate(-5deg);
+    }
+
+    .speech-bubble.variant-1 {
+      background: #FFF9E3;
+      border-color: var(--ui-color-2);
+      transform: rotate(1deg);
+    }
+
+    .speech-bubble.variant-1::after {
+      border-color: var(--ui-color-2) transparent;
+    }
+
+    .speech-bubble.variant-2 {
+      background: #FFE9E9;
+      border-color: var(--ui-color-5);
+      transform: rotate(-2deg);
+    }
+
+    .speech-bubble.variant-2::after {
+      border-color: var(--ui-color-5) transparent;
+    }
+
+    .handwritten {
+      font-family: 'Yomogi', cursive;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 1600px) {
+      .section-card {
+        min-width: 280px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .section-card {
+        min-width: 320px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .section-card {
+        min-width: 380px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section-layout {
+        flex-direction: column;
+      }
+      
+      .section-card {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>
+        <i class="fa-brands fa-aws fa-6x" style="color: var(--ui-color-1);"></i>
+        AWS CDK Guide
+      </h1>
+      <div class="header-date">Created: March 23, 2025</div>
+    </div>
+
+    <div class="section-layout">
+      <!-- Card 1: What is AWS CDK -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-cloud fa-5x" style="color: var(--ui-color-1); animation: fa-beat-fade 2s infinite;" aria-hidden="true"></i>
+          <h2>What is AWS CDK</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              <span><span class="keyword-tag">AWS Cloud Development Kit</span> - a framework for defining cloud resources using programming languages</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>Supports TypeScript, JavaScript, Python, Java, C#, Go and other programming languages</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+              <span>Learning resources: AWS Black Belt Online Seminar, workshops, and more</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-2);"></i>
+            Define your infrastructure 
+            <br>
+            as code using your favorite
+            <br>
+            programming language!
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 2: Benefits of AWS CDK -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-rocket fa-5x" style="color: var(--ui-color-2); animation: fa-flip 3s infinite;" aria-hidden="true"></i>
+          <h2>Benefits</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Type safety</span> helps detect errors at compile time</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Code reuse</span> standardizes best practices and improves quality</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Improved productivity</span>: IDE completion, conditions, loops, etc.</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-merge" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Infrastructure and app integration</span>: unified repository management</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-expand" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Scaling and governance</span>: easy deployment across multiple environments/regions</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1 right">
+          <span class="handwritten">
+            <i class="fa-solid fa-heart fa-lg" style="color: var(--ui-color-2);"></i>
+            Build the same environment
+            <br>
+            with less code than
+            <br>
+            CloudFormation!
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 3: AWS CDK Basics - Components -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-cubes fa-5x" style="color: var(--ui-color-1); animation: fa-bounce 2s infinite;" aria-hidden="true"></i>
+          <h2>CDK Components</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-gear" aria-hidden="true"></i>
+              <span><span class="keyword-tag">App</span>: Top-level construct that defines stack dependencies</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Stack</span>: Corresponds to one CloudFormation stack</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-cube" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Construct</span>: Creates resource definitions in the stack</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span>Construct levels:</span>
+              <ul class="keyword-list" style="margin-left: 20px;">
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L1</span>: 1:1 mapping with CloudFormation resources (Cfn prefix)</span>
+                </li>
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L2</span>: Higher level of abstraction (reduces boilerplate code)</span>
+                </li>
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L3</span>: Patterns, implementations combining multiple resources</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-2">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-5);"></i>
+            L2 Constructs are recommended!
+            <br>
+            They auto-generate resources 
+            <br>
+            and reduce code volume
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 4: AWS CDK Commands -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-terminal fa-5x" style="color: var(--ui-color-2); animation: fa-bounce 2s infinite alternate;" aria-hidden="true"></i>
+          <h2>CDK Commands</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-play" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk init</span>: Set up necessary files</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk bootstrap</span>: Create resources needed for CDK</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-upload" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk deploy</span>: Deploy resources to AWS environment</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-compare" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk diff</span>: Check differences between code and deployed environment</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-file-code" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk synth</span>: Generate CloudFormation template</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-trash" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk destroy</span>: Delete stacks</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-list" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk list / cdk ls</span>: Display list of stacks in the app</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card 5: AWS CDK Development Methods -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-code fa-5x" style="color: var(--ui-color-1); animation: fa-fade 3s infinite;" aria-hidden="true"></i>
+          <h2>Development Methods</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-brain" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Required knowledge</span>: AWS resources basics, CloudFormation experience, programming experience</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-laptop-code" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Required environment</span>: AWS CLI v2, Node.js, text editor (IDE recommended)</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Directory structure</span>: separate into stacks, resources, utils, parameters</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Stack division</span>: manage with a single stack when possible (cross-stack references are complex)</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-tag" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Construct ID naming conventions</span>: PascalCase, simple names recommended</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1">
+          <span class="handwritten">
+            <i class="fa-solid fa-exclamation-triangle fa-lg" style="color: var(--ui-color-2);"></i>
+            Be careful with stack division!
+            <br>
+            Resource dependencies can
+            <br>
+            cause deadlocks!
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 6: AWS CDK Testing Methods -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-vial fa-5x" style="color: var(--ui-color-2); animation: fa-spin 5s infinite linear;" aria-hidden="true"></i>
+          <h2>Testing Methods</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-camera" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Snapshot Test</span>: Check differences from previously generated templates</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Unit Test</span>: Resource-level testing using Jest</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>Test example:</span>
+            </li>
+          </ul>
+          
+          <pre>
+test("create the vpc", () => {
+  // GIVEN
+  const app = new App();
+  const stack = new VPCStack(app, "testing-vpc", {});
+  // WHEN
+  const template = Template.fromStack(stack);
+  // THEN
+  template.resourceCountIs("AWS::EC2::VPC", 1);
+  template.hasResourceProperties("AWS::EC2::VPC", {
+    CidrBlock: "10.0.0.0/16",
+  });
+});</pre>
+        </div>
+      </div>
+
+      <!-- Card 7: AWS CDK Tips -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-lightbulb fa-5x" style="color: var(--ui-color-1); animation: fa-pulse 2s infinite;" aria-hidden="true"></i>
+          <h2>Practical Tips</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-tags" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Common tagging</span>: Tags.of(app).add('Key', 'Value')</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Dynamic parameters</span>: Specify with -c key=value, retrieve with app.node.tryGetContext('key')</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Production environment protection</span>: Warning messages, terminationProtection: true</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Region specification</span>: Manage with defaultEnv variable</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-user-tag" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Profile naming</span>: Match environment identifiers with profile names to prevent mistakes</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble right variant-2">
+          <span class="handwritten">
+            <i class="fa-solid fa-exclamation-triangle fa-lg" style="color: var(--ui-color-5);"></i>
+            Pre-define commands in
+            <br>
+            package.json for convenience!
+            <br>
+            <span class="keyword-tag">npm run cdk:deploy:all</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 8: cdk-nag -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-shield-virus fa-5x" style="color: var(--ui-color-1); animation: fa-beat 2s infinite;" aria-hidden="true"></i>
+          <h2>cdk-nag</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk-nag</span>: Static analysis tool for security and compliance enforcement</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Rules Pack</span>: Numerous rule sets including AWS Solutions, HIPAA, NIST, PCI</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>Implementation example:</span>
+            </li>
+          </ul>
+          
+          <pre>
+// Add to App definition
+import { AwsSolutionsChecks } from "cdk-nag";
+const app = new cdk.App();
+cdk.Aspects.of(app).add(new AwsSolutionsChecks());</pre>
+          
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-ban" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Error suppression</span>: Exclude specific rules with NagSuppressions</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-plus-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Custom rules</span>: Add your own rules by extending NagPack</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-2);"></i>
+            Use cdk-nag to
+            <br>
+            automatically check 
+            <br>
+            security best practices!
+          </span>
+        </div>
+      </div>
+      
+      <!-- Card 9: CDK v2 Features -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-code-branch fa-5x" style="color: var(--ui-color-2); animation: fa-fade 3s infinite;" aria-hidden="true"></i>
+          <h2>CDK v2 Features</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-box" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Single package</span>: Libraries integrated into aws-cdk-lib</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-compare" aria-hidden="true"></i>
+              <span>Difference from v1:</span>
+            </li>
+          </ul>
+          
+          <pre>
+// CDK v1
+npm install @aws-cdk/aws-lambda
+npm install @aws-cdk/aws-s3
+// ...other packages
+
+// CDK v2
+npm install aws-cdk-lib</pre>
+          
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-info-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Separation trend</span>: Since February 2025, AWS CDK CLI and CDK construct library are being separated</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-exclamation-circle" aria-hidden="true"></i>
+              <span>CLI starts from version 2.1000.0 with the new version system</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1 right">
+          <span class="handwritten">
+            <i class="fa-solid fa-info-circle fa-lg" style="color: var(--ui-color-2);"></i>
+            Pay attention to latest trends!
+            <br>
+            Dependency management in
+            <br>
+            package.json might change!
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

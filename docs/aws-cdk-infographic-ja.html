@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS CDK グラフィックレコーディング風インフォグラフィック</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol&family=Yomogi&family=Zen+Kurenaido&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+    :root {
+      --ui-color-1: #1B6C8C;
+      --ui-color-2: #BF8136;
+      --ui-color-3: #F2E8E4;
+      --ui-color-4: #260101;
+      --ui-color-5: #BF5656;
+    }
+
+    body {
+      font-family: 'Zen Kurenaido', sans-serif;
+      background-color: #FFF8F5;
+      color: #333333;
+      line-height: 1.5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 2000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeInScale 1s ease-out;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      color: #333333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .header-date {
+      font-size: 14px;
+      color: #777777;
+    }
+
+    .section-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .section-card {
+      flex: 1;
+      min-width: 220px;
+      max-width: 450px;
+      background-color: white;
+      border-radius: 20px;
+      padding: 15px;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInScale 0.6s ease-out;
+    }
+
+    .mega-icon-container {
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    .card-content {
+      padding: 0 10px 15px;
+    }
+
+    .keyword-list {
+      margin: 15px 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .keyword-list li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .keyword-list li i {
+      margin-right: 8px;
+      color: var(--ui-color-2);
+      min-width: 16px;
+    }
+
+    .keyword-tag {
+      background-color: var(--ui-color-3);
+      color: var(--ui-color-4);
+      padding: 3px 8px;
+      border-radius: 5px;
+      margin-right: 5px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    .speech-bubble {
+      position: relative;
+      background: #fff;
+      border: 3px solid var(--ui-color-1);
+      border-radius: 20px;
+      padding: 10px 15px;
+      margin: 15px 5px;
+      font-family: 'Yomogi', cursive;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+      transform: rotate(-1deg);
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      left: 20px;
+      border-width: 12px 8px 0;
+      border-style: solid;
+      border-color: var(--ui-color-1) transparent;
+      display: block;
+      width: 0;
+    }
+
+    .speech-bubble.right::after {
+      left: auto;
+      right: 20px;
+      transform: rotate(15deg);
+    }
+
+    .speech-bubble.top::after {
+      bottom: auto;
+      top: -13px;
+      border-width: 0 8px 12px;
+      transform: rotate(-5deg);
+    }
+
+    .speech-bubble.variant-1 {
+      background: #FFF9E3;
+      border-color: var(--ui-color-2);
+      transform: rotate(1deg);
+    }
+
+    .speech-bubble.variant-1::after {
+      border-color: var(--ui-color-2) transparent;
+    }
+
+    .speech-bubble.variant-2 {
+      background: #FFE9E9;
+      border-color: var(--ui-color-5);
+      transform: rotate(-2deg);
+    }
+
+    .speech-bubble.variant-2::after {
+      border-color: var(--ui-color-5) transparent;
+    }
+
+    .handwritten {
+      font-family: 'Yomogi', cursive;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 1600px) {
+      .section-card {
+        min-width: 280px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .section-card {
+        min-width: 320px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .section-card {
+        min-width: 380px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section-layout {
+        flex-direction: column;
+      }
+      
+      .section-card {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>
+        <i class="fa-brands fa-aws fa-6x" style="color: var(--ui-color-1);"></i>
+        AWS CDK 解説
+      </h1>
+      <div class="header-date">作成日: 2025年3月23日</div>
+    </div>
+
+    <div class="section-layout">
+      <!-- カード1: AWS CDKとは -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-cloud fa-5x" style="color: var(--ui-color-1); animation: fa-beat-fade 2s infinite;" aria-hidden="true"></i>
+          <h2>AWS CDKとは</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+              <span><span class="keyword-tag">AWS Cloud Development Kit</span>のことで、プログラミング言語を使用してクラウドリソースを定義するフレームワーク</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>TypeScript、JavaScript、Python、Java、C#、Goなどのプログラミング言語をサポート</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+              <span>学習リソース：AWS Black Belt Online Seminar、ワークショップなど多数</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-2);"></i>
+            使い慣れたプログラミング言語で
+            <br>
+            インフラをコードとして
+            <br>
+            定義できるよ！
+          </span>
+        </div>
+      </div>
+
+      <!-- カード2: AWS CDKの導入メリット -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-rocket fa-5x" style="color: var(--ui-color-2); animation: fa-flip 3s infinite;" aria-hidden="true"></i>
+          <h2>導入のメリット</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">型安全性</span>によるコンパイル時のエラー検出</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span><span class="keyword-tag">コード再利用</span>によるベストプラクティスの標準化と品質向上</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">開発生産性向上</span>：IDE補完、条件分岐、ループなどの活用</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-merge" aria-hidden="true"></i>
+              <span><span class="keyword-tag">インフラとアプリの統合</span>：同一リポジトリで一元管理</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-expand" aria-hidden="true"></i>
+              <span><span class="keyword-tag">スケーリングとガバナンス</span>：複数環境・リージョンへの展開が容易</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1 right">
+          <span class="handwritten">
+            <i class="fa-solid fa-heart fa-lg" style="color: var(--ui-color-2);"></i>
+            CloudFormationより
+            <br>
+            少ないコードで
+            <br>
+            同じ環境を構築できる！
+          </span>
+        </div>
+      </div>
+
+      <!-- カード3: AWS CDKの基礎 - 構成要素 -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-cubes fa-5x" style="color: var(--ui-color-1); animation: fa-bounce 2s infinite;" aria-hidden="true"></i>
+          <h2>AWS CDKの構成要素</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-gear" aria-hidden="true"></i>
+              <span><span class="keyword-tag">App</span>：最上位層でスタックの依存関係を定義</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Stack</span>：CloudFormationのスタック1つに対応</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-cube" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Construct</span>：スタックにリソース定義を作成</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span>Constructのレベル:</span>
+              <ul class="keyword-list" style="margin-left: 20px;">
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L1</span>：CloudFormationリソースと1:1対応（Cfnプレフィックス）</span>
+                </li>
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L2</span>：より高いレベルの抽象化（ボイラープレートコード削減）</span>
+                </li>
+                <li>
+                  <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                  <span><span class="keyword-tag">L3</span>：Patterns、複数リソースを組み合わせた実装</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-2">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-5);"></i>
+            L2 Constructがおすすめ！
+            <br>
+            自動的にリソースを生成して
+            <br>
+            コード量を削減できるよ
+          </span>
+        </div>
+      </div>
+
+      <!-- カード4: AWS CDKのコマンド -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-terminal fa-5x" style="color: var(--ui-color-2); animation: fa-bounce 2s infinite alternate;" aria-hidden="true"></i>
+          <h2>CDKコマンド</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-play" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk init</span>：必要なファイルをセットアップ</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk bootstrap</span>：CDK利用に必要なリソースを作成</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-upload" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk deploy</span>：リソースをAWS環境にデプロイ</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-compare" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk diff</span>：現在のコードとデプロイ済み環境の差分確認</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-file-code" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk synth</span>：CloudFormationテンプレートを生成</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-trash" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk destroy</span>：スタックを削除</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-list" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk list / cdk ls</span>：アプリのスタック一覧を表示</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- カード5: AWS CDKの開発方法 -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-code fa-5x" style="color: var(--ui-color-1); animation: fa-fade 3s infinite;" aria-hidden="true"></i>
+          <h2>開発方法</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-brain" aria-hidden="true"></i>
+              <span><span class="keyword-tag">必要な知識</span>：AWSリソース基礎知識、CloudFormation経験、プログラミング経験</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-laptop-code" aria-hidden="true"></i>
+              <span><span class="keyword-tag">必要な環境</span>：AWS CLI v2、Node.js、テキストエディタ（IDE推奨）</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>
+              <span><span class="keyword-tag">ディレクトリ構造</span>：stacks、resources、utils、parametersなどに分離</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-puzzle-piece" aria-hidden="true"></i>
+              <span><span class="keyword-tag">スタック分割</span>：極力単一スタックで管理（クロススタック参照は複雑化）</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-tag" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Construct ID命名規則</span>：PascalCase、シンプルな名前を推奨</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1">
+          <span class="handwritten">
+            <i class="fa-solid fa-exclamation-triangle fa-lg" style="color: var(--ui-color-2);"></i>
+            スタック分割は慎重に！
+            <br>
+            リソース間の依存関係で
+            <br>
+            デッドロックが発生するかも！
+          </span>
+        </div>
+      </div>
+
+      <!-- カード6: AWS CDKのテスト方法 -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-vial fa-5x" style="color: var(--ui-color-2); animation: fa-spin 5s infinite linear;" aria-hidden="true"></i>
+          <h2>テスト方法</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-camera" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Snapshot Test</span>：前回生成されたテンプレートとの差分チェック</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-check-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Unit Test</span>：Jestを使ったリソース単位のテスト</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>テスト記述例：</span>
+            </li>
+          </ul>
+          
+          <pre>
+test("create the vpc", () => {
+  // GIVEN
+  const app = new App();
+  const stack = new VPCStack(app, "testing-vpc", {});
+  // WHEN
+  const template = Template.fromStack(stack);
+  // THEN
+  template.resourceCountIs("AWS::EC2::VPC", 1);
+  template.hasResourceProperties("AWS::EC2::VPC", {
+    CidrBlock: "10.0.0.0/16",
+  });
+});</pre>
+        </div>
+      </div>
+
+      <!-- カード7: AWS CDK Tips -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-lightbulb fa-5x" style="color: var(--ui-color-1); animation: fa-pulse 2s infinite;" aria-hidden="true"></i>
+          <h2>実用Tips</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-tags" aria-hidden="true"></i>
+              <span><span class="keyword-tag">共通タグ付与</span>：Tags.of(app).add('Key', 'Value')</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+              <span><span class="keyword-tag">動的パラメータ</span>：-c key=valueで指定、app.node.tryGetContext('key')で取得</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-shield-alt" aria-hidden="true"></i>
+              <span><span class="keyword-tag">本番環境保護</span>：注意喚起メッセージ、terminationProtection: true</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+              <span><span class="keyword-tag">リージョン指定</span>：defaultEnv変数で管理</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-user-tag" aria-hidden="true"></i>
+              <span><span class="keyword-tag">プロファイル命名</span>：環境識別子とプロファイル名の一致で誤操作防止</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble right variant-2">
+          <span class="handwritten">
+            <i class="fa-solid fa-exclamation-triangle fa-lg" style="color: var(--ui-color-5);"></i>
+            package.jsonにコマンドを
+            <br>
+            事前定義しておくと便利！
+            <br>
+            <span class="keyword-tag">npm run cdk:deploy:all</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- カード8: cdk-nag -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-shield-virus fa-5x" style="color: var(--ui-color-1); animation: fa-beat 2s infinite;" aria-hidden="true"></i>
+          <h2>cdk-nag</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              <span><span class="keyword-tag">cdk-nag</span>：セキュリティとコンプライアンス強化のための静的解析ツール</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+              <span><span class="keyword-tag">Rules Pack</span>：AWS Solutions、HIPAA、NIST、PCIなど多数のルールセット</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <span>実装例：</span>
+            </li>
+          </ul>
+          
+          <pre>
+// App定義に追加
+import { AwsSolutionsChecks } from "cdk-nag";
+const app = new cdk.App();
+cdk.Aspects.of(app).add(new AwsSolutionsChecks());</pre>
+          
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-ban" aria-hidden="true"></i>
+              <span><span class="keyword-tag">エラー抑止</span>：NagSuppressionsで特定ルールを除外可能</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-plus-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">カスタムルール</span>：NagPackを拡張して独自ルールを追加可能</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble">
+          <span class="handwritten">
+            <i class="fa-solid fa-lightbulb fa-lg" style="color: var(--ui-color-2);"></i>
+            cdk-nagを使えば
+            <br>
+            セキュリティベストプラクティスを
+            <br>
+            自動チェックできるよ！
+          </span>
+        </div>
+      </div>
+      
+      <!-- カード9: CDK v2 の特徴 -->
+      <div class="section-card fade-in-scale">
+        <div class="mega-icon-container">
+          <i class="fa-solid fa-code-branch fa-5x" style="color: var(--ui-color-2); animation: fa-fade 3s infinite;" aria-hidden="true"></i>
+          <h2>CDK v2の特徴</h2>
+        </div>
+        
+        <div class="card-content">
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-box" aria-hidden="true"></i>
+              <span><span class="keyword-tag">単一パッケージ化</span>：aws-cdk-libに統合されたライブラリ</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-code-compare" aria-hidden="true"></i>
+              <span>v1との違い：</span>
+            </li>
+          </ul>
+          
+          <pre>
+// CDK v1
+npm install @aws-cdk/aws-lambda
+npm install @aws-cdk/aws-s3
+// ...other packages
+
+// CDK v2
+npm install aws-cdk-lib</pre>
+          
+          <ul class="keyword-list">
+            <li>
+              <i class="fa-solid fa-info-circle" aria-hidden="true"></i>
+              <span><span class="keyword-tag">分離の動き</span>：2025年2月から、AWS CDK CLIとCDKコンストラクトライブラリが分離</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-exclamation-circle" aria-hidden="true"></i>
+              <span>CLIは2.1000.0から新しいバージョン体系に</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="speech-bubble variant-1 right">
+          <span class="handwritten">
+            <i class="fa-solid fa-info-circle fa-lg" style="color: var(--ui-color-2);"></i>
+            最新の動向に注意！
+            <br>
+            package.jsonの依存関係管理が
+            <br>
+            変わるかも！
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
