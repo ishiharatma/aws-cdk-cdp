@@ -51,9 +51,8 @@ new Ec2KeycloakDockerStack(app, 'Ec2KeycloakDockerStack', {
   keycloakAdminPassword : envVals.LoginPassword,
   isPublic: true,
   ipAddresses: [
-//    '0.0.0.0/1',
-//    '128.0.0.0/1',
-    '59.136.147.44/32'
+    '0.0.0.0/1',
+    '128.0.0.0/1',
   ],
   startSchedule: envVals.EC2startSchedule,
   stopSchedule: envVals.EC2stopSchedule,
