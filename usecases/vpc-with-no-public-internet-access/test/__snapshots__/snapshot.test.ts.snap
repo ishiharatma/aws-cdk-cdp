@@ -1,0 +1,589 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot 1`] = `
+{
+  "Description": "VPC with no public internet access",
+  "Outputs": {
+    "FlowLogsBucketName": {
+      "Value": {
+        "Ref": "FlowLogsBucket8912DCDB",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "FlowLogsBucket8912DCDB",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E": {
+      "DependsOn": [
+        "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "7fa1e366ee8a9ded01fc355f704cff92bfd179574e6f9cfee800a3541df1b200.zip",
+        },
+        "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group",
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:AuthorizeSecurityGroupEgress",
+                    "ec2:RevokeSecurityGroupIngress",
+                    "ec2:RevokeSecurityGroupEgress",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":ec2:ap-northeast-1:123456789012:security-group/",
+                          {
+                            "Fn::GetAtt": [
+                              "MyVpcF9F0CA6F",
+                              "DefaultSecurityGroup",
+                            ],
+                          },
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FlowLogsBucket8912DCDB": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AccessControl": "Private",
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "BucketName": "snapshot-test-flowlogs-123456789012",
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "FlowLogsBucketAutoDeleteObjectsCustomResource261C6D2B": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "FlowLogsBucketPolicy49FA954A",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "FlowLogsBucket8912DCDB",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "FlowLogsBucketPolicy49FA954A": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "FlowLogsBucket8912DCDB",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "FlowLogsBucket8912DCDB",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "FlowLogsBucket8912DCDB",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "MyVpcF9F0CA6F": {
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "snapshot/test/VPC/123456789012",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "MyVpcFlowLogsFlowLogF83C1C7A": {
+      "DependsOn": [
+        "FlowLogsBucketAutoDeleteObjectsCustomResource261C6D2B",
+        "FlowLogsBucketPolicy49FA954A",
+      ],
+      "Properties": {
+        "LogDestination": {
+          "Fn::GetAtt": [
+            "FlowLogsBucket8912DCDB",
+            "Arn",
+          ],
+        },
+        "LogDestinationType": "s3",
+        "ResourceId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+        "ResourceType": "VPC",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/FlowLogs",
+          },
+        ],
+        "TrafficType": "ALL",
+      },
+      "Type": "AWS::EC2::FlowLog",
+    },
+    "MyVpcIsolatedSubnetSubnet1RouteTableAssociation4F6F5B7B": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1SubnetBEB69234",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet1SubnetBEB69234": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.2.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTableAssociation0542B7DC": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.3.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet1RouteTableAssociation2811D7AF": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1RouteTableD918A34F",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPrivateSubnetSubnet1RouteTableD918A34F": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/PrivateSubnetSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPrivateSubnetSubnet1SubnetE8BD536C": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.0.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PrivateSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/PrivateSubnetSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/PrivateSubnetSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPrivateSubnetSubnet2RouteTableAssociationE7A10A88": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.1.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PrivateSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          {
+            "Key": "Name",
+            "Value": "CloudFrontS3OacStack/MyVpc/PrivateSubnetSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcRestrictDefaultSecurityGroupCustomResourceA4FCCD62": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Account": "123456789012",
+        "DefaultSecurityGroupId": {
+          "Fn::GetAtt": [
+            "MyVpcF9F0CA6F",
+            "DefaultSecurityGroup",
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::VpcRestrictDefaultSG",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MyVpcS3VPCE1909106E": {
+      "Properties": {
+        "RouteTableIds": [
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet1RouteTableD918A34F",
+          },
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7",
+          },
+        ],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".s3",
+            ],
+          ],
+        },
+        "VpcEndpointType": "Gateway",
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

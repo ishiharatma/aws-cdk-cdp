@@ -15,7 +15,8 @@ test('case1', () => {
     const app = new App({
         context : {}
     });
-    const ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  [];
+    const ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  [
+    ];
     const stack = new S3StaticWebSiteStack(app, 'S3StaticWebSiteStack', {
         pjName: projectName,
         envName: envName,
@@ -27,7 +28,7 @@ test('case1', () => {
     const template = Template.fromStack(stack);
     // THEN
     template.hasResourceProperties('AWS::S3::Bucket', {
-        "BucketName": `${projectName}.${envName}.static-website.${defaultEnv.account}`,
+        "BucketName": `${projectName}-${envName}-static-website-${defaultEnv.account}`,
         "PublicAccessBlockConfiguration": {
             "BlockPublicAcls": false,
             "BlockPublicPolicy": false,
@@ -58,7 +59,7 @@ test('case2', () => {
     const template = Template.fromStack(stack);
     // THEN
     template.hasResourceProperties('AWS::S3::Bucket', {
-        "BucketName": `${projectName}.${envName}.static-website.${defaultEnv.account}`,
+        "BucketName": `${projectName}-${envName}-static-website-${defaultEnv.account}`,
         "PublicAccessBlockConfiguration": {
             "BlockPublicAcls": true,
             "BlockPublicPolicy": true,
@@ -85,5 +86,53 @@ test('case2', () => {
             })])
         },
     });
+});
 
+test('case3', () => {
+    // GIVEN
+    const app = new App({
+        context : {}
+    });
+    const ALLOWED_IP_V4_ADDRESS_RANGES: string[] =  [
+        '0.0.0.0/1',
+        '128.0.0.0/1'
+    ];
+    const stack = new S3StaticWebSiteStack(app, 'S3StaticWebSiteStack', {
+        pjName: projectName,
+        envName: envName,
+        isAutoDeleteObject: true,
+        allowedIpV4AddressRanges: ALLOWED_IP_V4_ADDRESS_RANGES,
+        env: defaultEnv,
+        });
+    // WHEN
+    const template = Template.fromStack(stack);
+    // THEN
+    template.hasResourceProperties('AWS::S3::Bucket', {
+        "BucketName": `${projectName}-${envName}-static-website-${defaultEnv.account}`,
+        "PublicAccessBlockConfiguration": {
+            "BlockPublicAcls": true,
+            "BlockPublicPolicy": true,
+            "IgnorePublicAcls": true,
+            "RestrictPublicBuckets": true,
+        },
+        "WebsiteConfiguration": {
+            "ErrorDocument": "error.html",
+            "IndexDocument": "index.html",
+        }
+    });
+    template.hasResourceProperties('AWS::S3::BucketPolicy', {
+        "PolicyDocument": {
+            "Statement": Match.arrayWith([Match.objectLike({
+                "Action": "s3:GetObject",
+                "Effect": "Allow",
+                "Condition": Match.objectLike(
+                    {
+                        "IpAddress": {
+                            "aws:SourceIp": Match.anyValue(),
+                        }
+                    },
+                ),
+            })])
+        },
+    });
 });

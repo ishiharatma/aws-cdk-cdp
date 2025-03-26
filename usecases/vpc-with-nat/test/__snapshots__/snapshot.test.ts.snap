@@ -9,11 +9,6 @@ exports[`snapshot validation test 1`] = `
         "Ref": "FlowLogsBucket8912DCDB",
       },
     },
-    "KMSKeyId": {
-      "Value": {
-        "Ref": "Key961B73FD",
-      },
-    },
     "NATInstanceKeyPairId": {
       "Value": {
         "Fn::GetAtt": [
@@ -58,7 +53,7 @@ exports[`snapshot validation test 1`] = `
       "Properties": {
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-          "S3Key": "b7f33614a69548d6bafe224d751a7ef238cde19097415e553fe8b63a4c8fd8a6.zip",
+          "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
         },
         "Description": {
           "Fn::Join": [
@@ -80,7 +75,7 @@ exports[`snapshot validation test 1`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -114,7 +109,7 @@ exports[`snapshot validation test 1`] = `
       "Properties": {
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-          "S3Key": "dd5711540f04e06aa955d7f4862fc04e8cdea464cb590dae91ed2976bb78098e.zip",
+          "S3Key": "7fa1e366ee8a9ded01fc355f704cff92bfd179574e6f9cfee800a3541df1b200.zip",
         },
         "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group",
         "Handler": "__entrypoint__.handler",
@@ -125,7 +120,7 @@ exports[`snapshot validation test 1`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -199,18 +194,12 @@ exports[`snapshot validation test 1`] = `
           "ServerSideEncryptionConfiguration": [
             {
               "ServerSideEncryptionByDefault": {
-                "KMSMasterKeyID": {
-                  "Fn::GetAtt": [
-                    "Key961B73FD",
-                    "Arn",
-                  ],
-                },
-                "SSEAlgorithm": "aws:kms",
+                "SSEAlgorithm": "AES256",
               },
             },
           ],
         },
-        "BucketName": "snapshot.test.flowlogs.123456789012",
+        "BucketName": "snapshot-test-flowlogs-123456789012",
         "OwnershipControls": {
           "Rules": [
             {
@@ -313,79 +302,10 @@ exports[`snapshot validation test 1`] = `
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "Key961B73FD": {
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "Description": "for VPC Flow log",
-        "EnableKeyRotation": true,
-        "KeyPolicy": {
-          "Statement": [
-            {
-              "Action": "kms:*",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::123456789012:root",
-                    ],
-                  ],
-                },
-              },
-              "Resource": "*",
-            },
-            {
-              "Action": [
-                "kms:Encrypt*",
-                "kms:Decrypt*",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*",
-                "kms:Describe*",
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "delivery.logs.amazonaws.com",
-              },
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Tags": [
-          {
-            "Key": "Environment",
-            "Value": "test",
-          },
-          {
-            "Key": "Project",
-            "Value": "snapshot",
-          },
-        ],
-      },
-      "Type": "AWS::KMS::Key",
-      "UpdateReplacePolicy": "Retain",
-    },
-    "KeyAlias910D852D": {
-      "Properties": {
-        "AliasName": "alias/VPCStack-for-flowlog",
-        "TargetKeyId": {
-          "Fn::GetAtt": [
-            "Key961B73FD",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::KMS::Alias",
-    },
     "KeyPair1622897B": {
       "Properties": {
         "KeyFormat": "pem",
-        "KeyName": "snapshot-test-nat-KeyPair",
+        "KeyName": "vpcstack-nat-KeyPair",
         "KeyType": "rsa",
         "Tags": [
           {
@@ -477,6 +397,150 @@ exports[`snapshot validation test 1`] = `
       },
       "Type": "AWS::EC2::InternetGateway",
     },
+    "MyVpcIsolatedSubnetSubnet1RouteTableAssociation4F6F5B7B": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1SubnetBEB69234",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet1SubnetBEB69234": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.4.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTableAssociation0542B7DC": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.5.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet1DefaultRoute58825934": {
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "MyVpcPublicSubnetSubnet1NATGateway9744F529",
+        },
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1RouteTableD918A34F",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
     "MyVpcPrivateSubnetSubnet1RouteTableAssociation2811D7AF": {
       "Properties": {
         "RouteTableId": {
@@ -522,7 +586,7 @@ exports[`snapshot validation test 1`] = `
           },
           {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           {
             "Key": "Environment",
@@ -542,6 +606,18 @@ exports[`snapshot validation test 1`] = `
         },
       },
       "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet2DefaultRoute0FED656C": {
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "MyVpcPublicSubnetSubnet2NATGateway883B336D",
+        },
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7",
+        },
+      },
+      "Type": "AWS::EC2::Route",
     },
     "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7": {
       "Properties": {
@@ -588,7 +664,7 @@ exports[`snapshot validation test 1`] = `
           },
           {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           {
             "Key": "Environment",
@@ -623,6 +699,58 @@ exports[`snapshot validation test 1`] = `
         },
       },
       "Type": "AWS::EC2::Route",
+    },
+    "MyVpcPublicSubnetSubnet1EIP5C2C4ED5": {
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/PublicSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "MyVpcPublicSubnetSubnet1NATGateway9744F529": {
+      "DependsOn": [
+        "MyVpcPublicSubnetSubnet1DefaultRoute2D379878",
+        "MyVpcPublicSubnetSubnet1RouteTableAssociation2CCE9CDC",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "MyVpcPublicSubnetSubnet1EIP5C2C4ED5",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPublicSubnetSubnet1Subnet60D1320D",
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/PublicSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
     },
     "MyVpcPublicSubnetSubnet1RouteTable00654ADB": {
       "Properties": {
@@ -704,6 +832,58 @@ exports[`snapshot validation test 1`] = `
         },
       },
       "Type": "AWS::EC2::Route",
+    },
+    "MyVpcPublicSubnetSubnet2EIPF93892AD": {
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/PublicSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "MyVpcPublicSubnetSubnet2NATGateway883B336D": {
+      "DependsOn": [
+        "MyVpcPublicSubnetSubnet2DefaultRouteAFC76296",
+        "MyVpcPublicSubnetSubnet2RouteTableAssociation7AF8666E",
+      ],
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "MyVpcPublicSubnetSubnet2EIPF93892AD",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPublicSubnetSubnet2Subnet122ADB1B",
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "VPCStack/MyVpc/PublicSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
     },
     "MyVpcPublicSubnetSubnet2RouteTableAssociation7AF8666E": {
       "Properties": {
@@ -791,6 +971,49 @@ exports[`snapshot validation test 1`] = `
       "Type": "Custom::VpcRestrictDefaultSG",
       "UpdateReplacePolicy": "Delete",
     },
+    "MyVpcS3VPCE1909106E": {
+      "Properties": {
+        "RouteTableIds": [
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet1RouteTableD918A34F",
+          },
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7",
+          },
+        ],
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".s3",
+            ],
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "snapshot/test/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcEndpointType": "Gateway",
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
     "MyVpcVPCGW488ACE0D": {
       "Properties": {
         "InternetGatewayId": {
@@ -815,6 +1038,9 @@ exports[`snapshot validation test 1`] = `
           "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61arm64C96584B6F00A464EAD1953AFF4B05118Parameter",
         },
         "InstanceType": "t4g.nano",
+        "KeyName": {
+          "Ref": "KeyPair1622897B",
+        },
         "LaunchTemplate": {
           "LaunchTemplateName": "NATInstanceLaunchTemplate",
           "Version": {
@@ -857,7 +1083,7 @@ sudo systemctl enable iptables
 sudo systemctl start iptables
 echo net.ipv4.ip_forward=1 >> /etc/sysctl.d/custom-ip-forwarding.conf
 sudo sysctl -p /etc/sysctl.d/custom-ip-forwarding.conf
-sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo /sbin/iptables -t nat -A POSTROUTING -o $(route | awk '/^default/{print $NF}') -j MASQUERADE
 sudo /sbin/iptables -F FORWARD
 sudo service iptables save",
         },
@@ -992,24 +1218,24 @@ sudo service iptables save",
       },
       "Type": "AWS::EC2::NetworkAcl",
     },
-    "NaclPrivateDefaultAssociationVPCStackMyVpcPrivateSubnetSubnet1AC0A110AEA05517C": {
+    "NaclPrivateDefaultAssociationVPCStackMyVpcIsolatedSubnetSubnet10840ED0173EB7400": {
       "Properties": {
         "NetworkAclId": {
           "Ref": "NaclPrivate8CEDB4C5",
         },
         "SubnetId": {
-          "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+          "Ref": "MyVpcIsolatedSubnetSubnet1SubnetBEB69234",
         },
       },
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
     },
-    "NaclPrivateDefaultAssociationVPCStackMyVpcPrivateSubnetSubnet202B500E2A1AFED8E": {
+    "NaclPrivateDefaultAssociationVPCStackMyVpcIsolatedSubnetSubnet2A7426CF9E10C5445": {
       "Properties": {
         "NetworkAclId": {
           "Ref": "NaclPrivate8CEDB4C5",
         },
         "SubnetId": {
-          "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+          "Ref": "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981",
         },
       },
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",

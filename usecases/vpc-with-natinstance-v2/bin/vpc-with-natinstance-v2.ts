@@ -37,6 +37,7 @@ const vpc = new VpcWithNatinstanceV2Stack(app, `VPCWithNATStack-${pjName}-${envN
     envName: envName,
     vpcCIDR: '10.0.0.0/16',
     isAutoDeleteObject: isAutoDeleteObject,
+    natgateways: 1,
     natInstanceStartCronSchedule: "cron(0 23 ? * SUN-THU *)",
     natInstanceStopCronSchedule: "cron(30 9 ? * MON-FRI *)",
     //isAttacheElasticIp: true,

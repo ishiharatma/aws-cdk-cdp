@@ -19,7 +19,7 @@ interface Ec2PgadminDockerStackProps extends StackProps {
 }
 
 export class Ec2PgadminDockerStack extends cdk.Stack {
-  public readonly instance: ec2.Instance;
+  public readonly instance: ec2.IInstance;
   constructor(scope: Construct, id: string, props: Ec2PgadminDockerStackProps) {
     super(scope, id, props);
     const accountId:string = cdk.Stack.of(this).account;
@@ -92,8 +92,8 @@ export class Ec2PgadminDockerStack extends cdk.Stack {
       // 起動スケジュール
       const startRule = new events.CfnRule(this, 'EC2StartRule', {
         name: [props.pjName, props.envName, 'EC2StartRule'].join('-'),
-        description: `${this.instance.instanceId} ${props.stopSchedule} Start`,
-        scheduleExpression: props.stopSchedule,
+        description: `${this.instance.instanceId} ${props.startSchedule} Start`,
+        scheduleExpression: props.startSchedule,
         targets: [{
           arn: `arn:aws:ssm:${region}::automation-definition/AWS-StartEC2Instance:$DEFAULT`,
           id: 'TargetEC2Instance1',

@@ -58,7 +58,7 @@ export class EcrContinuousScanStack extends cdk.Stack {
           path.join(__dirname, cWLambdaErrorSubscriptionFilterLambdaFunctionPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_11,
         timeout: cdk.Duration.seconds(defaultLambdaTimeoutSeconds),
         architecture: lambda.Architecture.ARM_64,
         environment: {
@@ -113,7 +113,7 @@ export class EcrContinuousScanStack extends cdk.Stack {
           path.join(__dirname, ecrScanLambdaSrcPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_11,
         timeout: cdk.Duration.seconds(defaultLambdaTimeoutSeconds),
         architecture: lambda.Architecture.ARM_64,
         environment: {
@@ -217,7 +217,7 @@ export class EcrContinuousScanStack extends cdk.Stack {
           path.join(__dirname, ecrContinuousScanSrcPath)
         ),
         handler: 'index.lambda_handler',
-        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_12,
+        runtime: props.input.lambdaRuntime ?? lambda.Runtime.PYTHON_3_11,
         timeout: cdk.Duration.seconds(600),
         architecture: lambda.Architecture.ARM_64,
         environment: {

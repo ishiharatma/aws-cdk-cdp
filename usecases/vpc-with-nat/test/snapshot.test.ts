@@ -12,7 +12,7 @@ const envName: string = 'test';
 const app = new App();
 
 test('snapshot validation test',() =>{
-    const vpc = new MyVpcStack(app, 'VPCStack', {
+    const stack = new MyVpcStack(app, 'VPCStack', {
         stackName: [projectName, envName, 'VPCStack'].join('-'),
         description: "Create VPC , Subnets , InternetGateway and etc.",
         pjName:projectName,
@@ -26,6 +26,6 @@ test('snapshot validation test',() =>{
     cdk.Tags.of(app).add('Project', projectName);
     cdk.Tags.of(app).add('Environment', envName);
     // test with snapshot
-    expect(Template.fromStack(vpc)).toMatchSnapshot();
+    expect(Template.fromStack(stack)).toMatchSnapshot();
 
 })

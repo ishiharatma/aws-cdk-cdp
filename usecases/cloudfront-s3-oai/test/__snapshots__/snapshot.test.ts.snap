@@ -2,12 +2,12 @@
 
 exports[`Snapshot 1`] = `
 {
-  "Description": "Deliver S3 static website using OAC with CloudFront",
+  "Description": "Deliver S3 static website using OAI(Legacy) with CloudFront",
   "Outputs": {
     "DistributionDomainName": {
       "Value": {
         "Fn::GetAtt": [
-          "CloudFrontOACCloudFront0BC9C40B",
+          "CloudFrontOAICloudFrontF62A83AD",
           "DomainName",
         ],
       },
@@ -34,7 +34,7 @@ exports[`Snapshot 1`] = `
             },
           ],
         },
-        "BucketName": "unittest.test.cloudfront-accesslogs-oac.123456789012",
+        "BucketName": "unittest-test-cloudfront-logs-oai-123456789012",
         "LifecycleConfiguration": {
           "Rules": [
             {
@@ -142,10 +142,10 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "CloudFrontOACCloudFront0BC9C40B": {
+    "CloudFrontOAICloudFrontF62A83AD": {
       "Properties": {
         "DistributionConfig": {
-          "Comment": "CloudFront for OAC",
+          "Comment": "CloudFront for OAI",
           "CustomErrorResponses": [
             {
               "ErrorCachingMinTTL": 60,
@@ -174,9 +174,9 @@ exports[`Snapshot 1`] = `
             "Compress": true,
             "OriginRequestPolicyId": "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf",
             "ResponseHeadersPolicyId": {
-              "Ref": "CloudFrontOACResponseHeadersPolicy9AF5DADD",
+              "Ref": "CloudFrontOAIResponseHeadersPolicy671F1F71",
             },
-            "TargetOriginId": "CloudFrontS3OacStackCloudFrontOACCloudFrontOrigin12574E2F3",
+            "TargetOriginId": "S3StaticWebSiteStackCloudFrontOAICloudFrontOrigin1988C869D",
             "ViewerProtocolPolicy": "redirect-to-https",
           },
           "DefaultRootObject": "index.html",
@@ -194,27 +194,25 @@ exports[`Snapshot 1`] = `
           },
           "Origins": [
             {
-              "CustomOriginConfig": {
-                "OriginProtocolPolicy": "http-only",
-                "OriginSSLProtocols": [
-                  "TLSv1.2",
-                ],
-              },
               "DomainName": {
                 "Fn::GetAtt": [
                   "WebsiteBucketS3BucketFE46300C",
                   "RegionalDomainName",
                 ],
               },
-              "Id": "CloudFrontS3OacStackCloudFrontOACCloudFrontOrigin12574E2F3",
-              "OriginAccessControlId": {
-                "Fn::GetAtt": [
-                  "CloudFrontOACOriginAccessControl0A885FA2",
-                  "Id",
-                ],
-              },
+              "Id": "S3StaticWebSiteStackCloudFrontOAICloudFrontOrigin1988C869D",
               "S3OriginConfig": {
-                "OriginAccessIdentity": "",
+                "OriginAccessIdentity": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "origin-access-identity/cloudfront/",
+                      {
+                        "Ref": "CloudFrontOAIOriginAccessIdentity475797E1",
+                      },
+                    ],
+                  ],
+                },
               },
             },
           ],
@@ -223,24 +221,24 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::CloudFront::Distribution",
     },
-    "CloudFrontOACIndexHtmlDeployAwsCliLayer7658F0D3": {
+    "CloudFrontOAIIndexHtmlDeployAwsCliLayerAE65A62A": {
       "Properties": {
         "Content": {
           "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-          "S3Key": "1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip",
+          "S3Key": "1c5a2ab1d1e53b0672a644454aab3dbb258ccd0079c92ad0e23b95b2c2079f70.zip",
         },
         "Description": "/opt/awscli/aws",
       },
       "Type": "AWS::Lambda::LayerVersion",
     },
-    "CloudFrontOACIndexHtmlDeployCustomResourceFF937D1F": {
+    "CloudFrontOAIIndexHtmlDeployCustomResource24B88EE1": {
       "DeletionPolicy": "Delete",
       "Properties": {
         "DestinationBucketName": {
           "Ref": "WebsiteBucketS3BucketFE46300C",
         },
         "DistributionId": {
-          "Ref": "CloudFrontOACCloudFront0BC9C40B",
+          "Ref": "CloudFrontOAICloudFrontF62A83AD",
         },
         "DistributionPaths": [
           "/*",
@@ -263,18 +261,15 @@ exports[`Snapshot 1`] = `
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "CloudFrontOACOriginAccessControl0A885FA2": {
+    "CloudFrontOAIOriginAccessIdentity475797E1": {
       "Properties": {
-        "OriginAccessControlConfig": {
-          "Name": "Origin Access Control for Website Bucket",
-          "OriginAccessControlOriginType": "s3",
-          "SigningBehavior": "always",
-          "SigningProtocol": "sigv4",
+        "CloudFrontOriginAccessIdentityConfig": {
+          "Comment": "website-distribution-originAccessIdentity",
         },
       },
-      "Type": "AWS::CloudFront::OriginAccessControl",
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
-    "CloudFrontOACResponseHeadersPolicy9AF5DADD": {
+    "CloudFrontOAIResponseHeadersPolicy671F1F71": {
       "Properties": {
         "ResponseHeadersPolicyConfig": {
           "CustomHeadersConfig": {
@@ -296,7 +291,7 @@ exports[`Snapshot 1`] = `
               },
             ],
           },
-          "Name": "CloudFrontS3OacStackCloudFrontOACResponseHeadersPolicyD7B090B9",
+          "Name": "S3StaticWebSiteStackCloudFrontOAIResponseHeadersPolicy05B91115",
           "SecurityHeadersConfig": {
             "ContentTypeOptions": {
               "Override": true,
@@ -343,7 +338,7 @@ exports[`Snapshot 1`] = `
         "Handler": "index.handler",
         "Layers": [
           {
-            "Ref": "CloudFrontOACIndexHtmlDeployAwsCliLayer7658F0D3",
+            "Ref": "CloudFrontOAIIndexHtmlDeployAwsCliLayerAE65A62A",
           },
         ],
         "Role": {
@@ -512,7 +507,7 @@ exports[`Snapshot 1`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -570,7 +565,7 @@ exports[`Snapshot 1`] = `
             },
           ],
         },
-        "BucketName": "unittest.test.website-oac.123456789012",
+        "BucketName": "unittest-test-website-oai-123456789012",
         "LoggingConfiguration": {
           "DestinationBucketName": {
             "Ref": "WebsiteLogsBucketS3BucketA5B66D15",
@@ -589,7 +584,7 @@ exports[`Snapshot 1`] = `
             "Value": "true",
           },
           {
-            "Key": "aws-cdk:cr-owned:b69d71f3",
+            "Key": "aws-cdk:cr-owned:6018a662",
             "Value": "true",
           },
         ],
@@ -645,24 +640,14 @@ exports[`Snapshot 1`] = `
             },
             {
               "Action": "s3:GetObject",
-              "Condition": {
-                "StringEquals": {
-                  "AWS:SourceArn": {
-                    "Fn::Join": [
-                      "",
-                      [
-                        "arn:aws:cloudfront::123456789012:distribution/",
-                        {
-                          "Ref": "CloudFrontOACCloudFront0BC9C40B",
-                        },
-                      ],
-                    ],
-                  },
-                },
-              },
               "Effect": "Allow",
               "Principal": {
-                "Service": "cloudfront.amazonaws.com",
+                "CanonicalUser": {
+                  "Fn::GetAtt": [
+                    "CloudFrontOAIOriginAccessIdentity475797E1",
+                    "S3CanonicalUserId",
+                  ],
+                },
               },
               "Resource": {
                 "Fn::Join": [
@@ -698,7 +683,7 @@ exports[`Snapshot 1`] = `
             },
           ],
         },
-        "BucketName": "unittest.test.website-accesslogs-oac.123456789012",
+        "BucketName": "unittest-test-website-logs-oai-123456789012",
         "LifecycleConfiguration": {
           "Rules": [
             {

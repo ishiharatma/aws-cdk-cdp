@@ -98,7 +98,6 @@ export class VpcWithNatinstanceV2Stack extends cdk.Stack {
     // https://docs.aws.amazon.com/ja_jp/securityhub/latest/userguide/ec2-controls.html#ec2-19
     natInstance.securityGroup.addIngressRule(ec2.Peer.ipv4(props.vpcCIDR),ec2.Port.allTraffic());
 
-
     const role = new iam.Role(this, `NatInstanceStartStopRole`, {
       roleName: [props.pjName, props.envName, 'NatInstanceStartStop'].join('-'),
       assumedBy: new iam.ServicePrincipal('events.amazonaws.com'),

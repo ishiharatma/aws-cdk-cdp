@@ -1,14 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Snapshot 1`] = `
+exports[`snapshot validation test 1`] = `
 {
-  "Description": "Deliver S3 static website using OAI(Legacy) with CloudFront",
+  "Description": "",
   "Outputs": {
-    "DistributionDomainName": {
+    "BucketWebsiteUrl": {
+      "Description": "URL for website hosted on S3",
       "Value": {
         "Fn::GetAtt": [
-          "CloudFrontOAICloudFrontF62A83AD",
-          "DomainName",
+          "WebsiteBucketS3BucketFE46300C",
+          "WebsiteURL",
         ],
       },
     },
@@ -21,305 +22,6 @@ exports[`Snapshot 1`] = `
     },
   },
   "Resources": {
-    "CloudFrontLogsBucketS3Bucket9A2DFA2A": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AccessControl": "LogDeliveryWrite",
-        "BucketEncryption": {
-          "ServerSideEncryptionConfiguration": [
-            {
-              "ServerSideEncryptionByDefault": {
-                "SSEAlgorithm": "AES256",
-              },
-            },
-          ],
-        },
-        "BucketName": "unittest.test.cloudfront-logs-oai.123456789012",
-        "LifecycleConfiguration": {
-          "Rules": [
-            {
-              "AbortIncompleteMultipartUpload": {
-                "DaysAfterInitiation": 7,
-              },
-              "ExpirationInDays": 90,
-              "ExpiredObjectDeleteMarker": false,
-              "Id": "Delete-After-90Days",
-              "Status": "Enabled",
-            },
-          ],
-        },
-        "OwnershipControls": {
-          "Rules": [
-            {
-              "ObjectOwnership": "ObjectWriter",
-            },
-          ],
-        },
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": true,
-          "BlockPublicPolicy": true,
-          "IgnorePublicAcls": true,
-          "RestrictPublicBuckets": true,
-        },
-        "Tags": [
-          {
-            "Key": "aws-cdk:auto-delete-objects",
-            "Value": "true",
-          },
-        ],
-      },
-      "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "CloudFrontLogsBucketS3BucketAutoDeleteObjectsCustomResource0F564338": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "CloudFrontLogsBucketS3BucketPolicy0414F1AB",
-      ],
-      "Properties": {
-        "BucketName": {
-          "Ref": "CloudFrontLogsBucketS3Bucket9A2DFA2A",
-        },
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::S3AutoDeleteObjects",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "CloudFrontLogsBucketS3BucketPolicy0414F1AB": {
-      "Properties": {
-        "Bucket": {
-          "Ref": "CloudFrontLogsBucketS3Bucket9A2DFA2A",
-        },
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "s3:PutBucketPolicy",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::GetAtt": [
-                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "CloudFrontLogsBucketS3Bucket9A2DFA2A",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "CloudFrontLogsBucketS3Bucket9A2DFA2A",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-      },
-      "Type": "AWS::S3::BucketPolicy",
-    },
-    "CloudFrontOAICloudFrontF62A83AD": {
-      "Properties": {
-        "DistributionConfig": {
-          "Comment": "CloudFront for OAI",
-          "CustomErrorResponses": [
-            {
-              "ErrorCachingMinTTL": 60,
-              "ErrorCode": 403,
-              "ResponseCode": 403,
-              "ResponsePagePath": "/error.html",
-            },
-            {
-              "ErrorCachingMinTTL": 60,
-              "ErrorCode": 404,
-              "ResponseCode": 404,
-              "ResponsePagePath": "/error.html",
-            },
-          ],
-          "DefaultCacheBehavior": {
-            "AllowedMethods": [
-              "GET",
-              "HEAD",
-              "OPTIONS",
-            ],
-            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
-            "CachedMethods": [
-              "GET",
-              "HEAD",
-            ],
-            "Compress": true,
-            "OriginRequestPolicyId": "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf",
-            "ResponseHeadersPolicyId": {
-              "Ref": "CloudFrontOAIResponseHeadersPolicy671F1F71",
-            },
-            "TargetOriginId": "S3StaticWebSiteStackCloudFrontOAICloudFrontOrigin1988C869D",
-            "ViewerProtocolPolicy": "redirect-to-https",
-          },
-          "DefaultRootObject": "index.html",
-          "Enabled": true,
-          "HttpVersion": "http2and3",
-          "IPV6Enabled": false,
-          "Logging": {
-            "Bucket": {
-              "Fn::GetAtt": [
-                "CloudFrontLogsBucketS3Bucket9A2DFA2A",
-                "RegionalDomainName",
-              ],
-            },
-            "Prefix": "",
-          },
-          "Origins": [
-            {
-              "DomainName": {
-                "Fn::GetAtt": [
-                  "WebsiteBucketS3BucketFE46300C",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "S3StaticWebSiteStackCloudFrontOAICloudFrontOrigin1988C869D",
-              "S3OriginConfig": {
-                "OriginAccessIdentity": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "origin-access-identity/cloudfront/",
-                      {
-                        "Ref": "CloudFrontOAIOriginAccessIdentity475797E1",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
-          ],
-          "PriceClass": "PriceClass_200",
-        },
-      },
-      "Type": "AWS::CloudFront::Distribution",
-    },
-    "CloudFrontOAIIndexHtmlDeployAwsCliLayerAE65A62A": {
-      "Properties": {
-        "Content": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-          "S3Key": "1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip",
-        },
-        "Description": "/opt/awscli/aws",
-      },
-      "Type": "AWS::Lambda::LayerVersion",
-    },
-    "CloudFrontOAIIndexHtmlDeployCustomResource24B88EE1": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "DestinationBucketName": {
-          "Ref": "WebsiteBucketS3BucketFE46300C",
-        },
-        "DistributionId": {
-          "Ref": "CloudFrontOAICloudFrontF62A83AD",
-        },
-        "DistributionPaths": [
-          "/*",
-        ],
-        "OutputObjectKeys": true,
-        "Prune": true,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
-            "Arn",
-          ],
-        },
-        "SourceBucketNames": [
-          "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-        ],
-        "SourceObjectKeys": [
-          "133b62e6550924b60dea459dfcdde5c077c0d2e8821f00733b577aa2f05b4fe5.zip",
-        ],
-      },
-      "Type": "Custom::CDKBucketDeployment",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "CloudFrontOAIOriginAccessIdentity475797E1": {
-      "Properties": {
-        "CloudFrontOriginAccessIdentityConfig": {
-          "Comment": "website-distribution-originAccessIdentity",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "CloudFrontOAIResponseHeadersPolicy671F1F71": {
-      "Properties": {
-        "ResponseHeadersPolicyConfig": {
-          "CustomHeadersConfig": {
-            "Items": [
-              {
-                "Header": "Cache-Control",
-                "Override": true,
-                "Value": "no-cache",
-              },
-              {
-                "Header": "pragma",
-                "Override": true,
-                "Value": "no-cache",
-              },
-              {
-                "Header": "server",
-                "Override": true,
-                "Value": "",
-              },
-            ],
-          },
-          "Name": "S3StaticWebSiteStackCloudFrontOAIResponseHeadersPolicy05B91115",
-          "SecurityHeadersConfig": {
-            "ContentTypeOptions": {
-              "Override": true,
-            },
-            "FrameOptions": {
-              "FrameOption": "DENY",
-              "Override": true,
-            },
-            "ReferrerPolicy": {
-              "Override": true,
-              "ReferrerPolicy": "same-origin",
-            },
-            "StrictTransportSecurity": {
-              "AccessControlMaxAgeSec": 63072000,
-              "IncludeSubdomains": true,
-              "Override": true,
-              "Preload": true,
-            },
-            "XSSProtection": {
-              "ModeBlock": true,
-              "Override": true,
-              "Protection": true,
-            },
-          },
-        },
-      },
-      "Type": "AWS::CloudFront::ResponseHeadersPolicy",
-    },
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
       "DependsOn": [
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
@@ -338,7 +40,7 @@ exports[`Snapshot 1`] = `
         "Handler": "index.handler",
         "Layers": [
           {
-            "Ref": "CloudFrontOAIIndexHtmlDeployAwsCliLayerAE65A62A",
+            "Ref": "WebsiteBucketS3FileUploadAwsCliLayer0772B767",
           },
         ],
         "Role": {
@@ -348,6 +50,16 @@ exports[`Snapshot 1`] = `
           ],
         },
         "Runtime": "python3.11",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -378,6 +90,16 @@ exports[`Snapshot 1`] = `
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
               ],
             ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
           },
         ],
       },
@@ -457,14 +179,6 @@ exports[`Snapshot 1`] = `
                   ],
                 },
               ],
-            },
-            {
-              "Action": [
-                "cloudfront:GetInvalidation",
-                "cloudfront:CreateInvalidation",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
             },
           ],
           "Version": "2012-10-17",
@@ -565,7 +279,7 @@ exports[`Snapshot 1`] = `
             },
           ],
         },
-        "BucketName": "unittest.test.website-oai.123456789012",
+        "BucketName": "snapshot-test-static-website-123456789012",
         "LoggingConfiguration": {
           "DestinationBucketName": {
             "Ref": "WebsiteLogsBucketS3BucketA5B66D15",
@@ -584,10 +298,22 @@ exports[`Snapshot 1`] = `
             "Value": "true",
           },
           {
-            "Key": "aws-cdk:cr-owned:6018a662",
+            "Key": "aws-cdk:cr-owned:723b95f1",
             "Value": "true",
           },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
         ],
+        "WebsiteConfiguration": {
+          "ErrorDocument": "error.html",
+          "IndexDocument": "index.html",
+        },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Delete",
@@ -640,14 +366,16 @@ exports[`Snapshot 1`] = `
             },
             {
               "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": {
-                "CanonicalUser": {
-                  "Fn::GetAtt": [
-                    "CloudFrontOAIOriginAccessIdentity475797E1",
-                    "S3CanonicalUserId",
+              "Condition": {
+                "IpAddress": {
+                  "aws:SourceIp": [
+                    "0.0.0.0/0",
                   ],
                 },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
               },
               "Resource": {
                 "Fn::Join": [
@@ -670,6 +398,40 @@ exports[`Snapshot 1`] = `
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "WebsiteBucketS3FileUploadAwsCliLayer0772B767": {
+      "Properties": {
+        "Content": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "1c5a2ab1d1e53b0672a644454aab3dbb258ccd0079c92ad0e23b95b2c2079f70.zip",
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "WebsiteBucketS3FileUploadCustomResource64803444": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "DestinationBucketName": {
+          "Ref": "WebsiteBucketS3BucketFE46300C",
+        },
+        "OutputObjectKeys": true,
+        "Prune": true,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+        ],
+        "SourceObjectKeys": [
+          "133b62e6550924b60dea459dfcdde5c077c0d2e8821f00733b577aa2f05b4fe5.zip",
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
     "WebsiteLogsBucketS3BucketA5B66D15": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -683,7 +445,7 @@ exports[`Snapshot 1`] = `
             },
           ],
         },
-        "BucketName": "unittest.test.website-logs-oai.123456789012",
+        "BucketName": "snapshot-test-static-website-logs-123456789012",
         "LifecycleConfiguration": {
           "Rules": [
             {
@@ -714,6 +476,14 @@ exports[`Snapshot 1`] = `
           {
             "Key": "aws-cdk:auto-delete-objects",
             "Value": "true",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
           },
         ],
       },

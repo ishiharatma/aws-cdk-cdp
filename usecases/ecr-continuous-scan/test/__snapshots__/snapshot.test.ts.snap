@@ -1,0 +1,1170 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot validation test 1`] = `
+{
+  "Description": "Continuously scan ECR container images.",
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "CWLambdaErrorSubscriptionFilterLambdaRole779D2720": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "logs:Get*",
+                    "sns:Publish",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "cWLambdaErrorSubscriptionFilter",
+          },
+        ],
+        "RoleName": "@role-lambda-snapshot-test-ecrscan-subscriptionfilter",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CWLambdaErrorSubscriptionFilterLambdaRoleDefaultPolicy50E4AE2E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CWLambdaErrorSubscriptionFilterLambdaRoleDefaultPolicy50E4AE2E",
+        "Roles": [
+          {
+            "Ref": "CWLambdaErrorSubscriptionFilterLambdaRole779D2720",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+      "DependsOn": [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "c6358465bf49dfae556bb430bf9c81fa578c221b82c308e3707901b1dd654762.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "configS3S3FileUploadAwsCliLayerA207D374",
+          },
+        ],
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.11",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::cdk-hnb659fds-assets-123456789012-ap-northeast-1/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "configS3S3BucketE2DE06A9",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "configS3S3BucketE2DE06A9",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": [
+          {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "configS3S3BucketE2DE06A9",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EcrContinuousScanEventRuleAllowEventRuleVPCStackecrContinuousScanFunctionFB2C55BC8695B248": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ecrContinuousScanFunction62984510",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "EcrContinuousScanEventRuleC70549C8",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "EcrContinuousScanEventRuleC70549C8": {
+      "Properties": {
+        "Description": "ECR Container Image Re-Scan. Run at 9:00 (JST) every 1st day of the month",
+        "ScheduleExpression": "cron(0 0 1 * ? *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "ecrContinuousScanFunction62984510",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "EcrContinuousScanFunctionRole7DF42C6F": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ecr:DescribeImages",
+                    "ecr:DescribeImageScanFindings",
+                    "ecr:ListImages",
+                    "ecr:StartImageScan",
+                    "s3:Get*",
+                    "sns:Publish",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "ecrScan",
+          },
+        ],
+        "RoleName": "@role-lambda-snapshot-test-ecr-continuous-scan",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EcrContinuousScanFunctionRoleDefaultPolicy8E74FFF2": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EcrContinuousScanFunctionRoleDefaultPolicy8E74FFF2",
+        "Roles": [
+          {
+            "Ref": "EcrContinuousScanFunctionRole7DF42C6F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "EcrScanFunctionRoleA4116D6E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ecr:DescribeImages",
+                    "sns:Publish",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "scrScan",
+          },
+        ],
+        "RoleName": "@role-lambda-snapshot-test-ecrscan",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EcrScanFunctionRoleDefaultPolicy0328F546": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EcrScanFunctionRoleDefaultPolicy0328F546",
+        "Roles": [
+          {
+            "Ref": "EcrScanFunctionRoleA4116D6E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+      "DependsOn": [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "5bc602ecde93c947efe5899ae355f999986a1acbe610b1c0b9c468d738857555.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": [
+          {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6": {
+      "DependsOn": [
+        "CWLambdaErrorSubscriptionFilterLambdaRoleDefaultPolicy50E4AE2E",
+        "CWLambdaErrorSubscriptionFilterLambdaRole779D2720",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "5e8dca3beb67cd4e56abd8bacfd1de9cdc258becb5fdef1f77e26a224d3bf21d.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "ENV_NAME": "test",
+            "LOG_LEVEL": "INFO",
+            "PROJECT_NAME": "snapshot",
+            "TOPIC_ARNS": "arn:aws:sns:ap-northeast-1:123456789012:MyTopic",
+          },
+        },
+        "FunctionName": "snapshot-test-ecrscan-cw-subscriptionfilter",
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "CWLambdaErrorSubscriptionFilterLambdaRole779D2720",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.11",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "cWLambdaErrorSubscriptionFilterLambdaFunctioncWLambdaErrorSubscriptionFilterLambdaFunctionEventPermisson299A0177": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "cWLambdaErrorSubscriptionFilterLambdaFunctioncWLambdaErrorSubscriptionFilterLambdaFunctionPermissonEE548838": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "Principal": "logs.amazonaws.com",
+        "SourceAccount": "123456789012",
+        "SourceArn": "arn:aws:logs:ap-northeast-1:123456789012:log-group:*:*",
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "configS3S3BucketAutoDeleteObjectsCustomResource7D2B61B9": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "configS3S3BucketPolicy1B18062F",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "configS3S3BucketE2DE06A9",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "configS3S3BucketE2DE06A9": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "BucketName": "ecr.continuous.scan.config-snapshot-test-123456789012",
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+          {
+            "Key": "aws-cdk:cr-owned:c5001c15",
+            "Value": "true",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "configS3S3BucketPolicy1B18062F": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "configS3S3BucketE2DE06A9",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "configS3S3BucketE2DE06A9",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "configS3S3BucketE2DE06A9",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "configS3S3FileUploadAwsCliLayerA207D374": {
+      "Properties": {
+        "Content": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "1c5a2ab1d1e53b0672a644454aab3dbb258ccd0079c92ad0e23b95b2c2079f70.zip",
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "configS3S3FileUploadCustomResourceF6C7B02A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "DestinationBucketName": {
+          "Ref": "configS3S3BucketE2DE06A9",
+        },
+        "OutputObjectKeys": true,
+        "Prune": true,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": [
+          "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+        ],
+        "SourceObjectKeys": [
+          "730378be6cc860326d164f1dc9c4d4c041d24ebfa7da54c467f8cba63227ce1a.zip",
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ecrContinuousScanFunction62984510": {
+      "DependsOn": [
+        "EcrContinuousScanFunctionRoleDefaultPolicy8E74FFF2",
+        "EcrContinuousScanFunctionRole7DF42C6F",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "02ab608b6b71e9d79319bc9ef8f369efd1e16b17b7a784d2decf7e6a1b04f752.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "configS3S3BucketE2DE06A9",
+            },
+            "LOG_LEVEL": "INFO",
+            "OBJECT_KEY_NAME": "test.json",
+          },
+        },
+        "FunctionName": "snapshot-test-ecr-continuous-scan",
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "EcrContinuousScanFunctionRole7DF42C6F",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.11",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "Timeout": 600,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ecrContinuousScanFunctionLogRetention147F4B3D": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ecrContinuousScanFunction62984510",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ecrContinuousScanFunctionecrContinuousScanFunctionLogGroupEcrContinuousScanLambdaFunctionSubscriptionFilterCanInvokeLambdaE0C57597": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "Principal": "logs.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":logs:ap-northeast-1:123456789012:log-group:",
+              {
+                "Fn::GetAtt": [
+                  "ecrContinuousScanFunctionLogRetention147F4B3D",
+                  "LogGroupName",
+                ],
+              },
+              ":*",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ecrContinuousScanFunctionecrContinuousScanFunctionLogGroupEcrContinuousScanLambdaFunctionSubscriptionFilterF6E3B472": {
+      "DependsOn": [
+        "ecrContinuousScanFunctionecrContinuousScanFunctionLogGroupEcrContinuousScanLambdaFunctionSubscriptionFilterCanInvokeLambdaE0C57597",
+      ],
+      "Properties": {
+        "DestinationArn": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "FilterPattern": ""[ERROR]"",
+        "LogGroupName": {
+          "Fn::GetAtt": [
+            "ecrContinuousScanFunctionLogRetention147F4B3D",
+            "LogGroupName",
+          ],
+        },
+      },
+      "Type": "AWS::Logs::SubscriptionFilter",
+    },
+    "ecrScanEvent79DDF476": {
+      "Properties": {
+        "EventPattern": {
+          "detail-type": [
+            "ECR Image Scan",
+          ],
+          "source": [
+            "aws.ecr",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "ecrScanFunctionE1355F7C",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ecrScanEventAllowEventRuleVPCStackecrScanFunction938C4664C8BEC511": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ecrScanFunctionE1355F7C",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "ecrScanEvent79DDF476",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ecrScanFunctionE1355F7C": {
+      "DependsOn": [
+        "EcrScanFunctionRoleDefaultPolicy0328F546",
+        "EcrScanFunctionRoleA4116D6E",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "e182265ddec1a809f68f763324c5e59a9170630d5773bda8be425fc35e02c760.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "ENV_NAME": "test",
+            "LOG_LEVEL": "INFO",
+            "PROJECT_NAME": "snapshot",
+            "TOPIC_ARN": "arn:aws:sns:ap-northeast-1:123456789012:MyTopic",
+          },
+        },
+        "FunctionName": "snapshot-test-ecr-scan-notification",
+        "Handler": "index.lambda_handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "EcrScanFunctionRoleA4116D6E",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.11",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ecrScanFunctionLogRetention79B14800": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "ecrScanFunctionE1355F7C",
+              },
+            ],
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ecrScanFunctionecrScanFunctionLogGroupEcrScanLambdaFunctionSubscriptionFilterCanInvokeLambda53407616": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "Principal": "logs.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":logs:ap-northeast-1:123456789012:log-group:",
+              {
+                "Fn::GetAtt": [
+                  "ecrScanFunctionLogRetention79B14800",
+                  "LogGroupName",
+                ],
+              },
+              ":*",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ecrScanFunctionecrScanFunctionLogGroupEcrScanLambdaFunctionSubscriptionFilterF6BE70C8": {
+      "DependsOn": [
+        "ecrScanFunctionecrScanFunctionLogGroupEcrScanLambdaFunctionSubscriptionFilterCanInvokeLambda53407616",
+      ],
+      "Properties": {
+        "DestinationArn": {
+          "Fn::GetAtt": [
+            "cWLambdaErrorSubscriptionFilterLambdaFunctionAE02B2E6",
+            "Arn",
+          ],
+        },
+        "FilterPattern": ""[ERROR]"",
+        "LogGroupName": {
+          "Fn::GetAtt": [
+            "ecrScanFunctionLogRetention79B14800",
+            "LogGroupName",
+          ],
+        },
+      },
+      "Type": "AWS::Logs::SubscriptionFilter",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

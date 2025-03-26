@@ -1,0 +1,381 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot validation test 1`] = `
+{
+  "Description": "Setup EC2 for PgAdmin",
+  "Outputs": {
+    "EC2InstanceId": {
+      "Description": "PgAdmin Instance",
+      "Value": {
+        "Ref": "EC2Instance14196AB1A",
+      },
+    },
+    "EC2InstanceKeyPairId": {
+      "Value": {
+        "Fn::GetAtt": [
+          "KeyPair1622897B",
+          "KeyPairId",
+        ],
+      },
+    },
+    "EC2SecurityGroupId": {
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2SecurityGroup05DEE054",
+          "GroupId",
+        ],
+      },
+    },
+    "GetSSHKeyCommand": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "aws ssm get-parameter --name /ec2/keypair/",
+            {
+              "Fn::GetAtt": [
+                "KeyPair1622897B",
+                "KeyPairId",
+              ],
+            },
+            " --region ap-northeast-1 --with-decryption --query Parameter.Value --output text",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61arm64C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+    },
+  },
+  "Resources": {
+    "EC2Instance14196AB1A": {
+      "DependsOn": [
+        "EC2Instance1InstanceRole34EB269B",
+      ],
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "IamInstanceProfile": {
+          "Ref": "EC2Instance1InstanceProfileF359155E",
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61arm64C96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "InstanceType": "t4g.nano",
+        "KeyName": {
+          "Ref": "KeyPair1622897B",
+        },
+        "LaunchTemplate": {
+          "LaunchTemplateName": "EC2Instance1LaunchTemplate",
+          "Version": {
+            "Fn::GetAtt": [
+              "EC2Instance1LaunchTemplate1B7F9B1D",
+              "LatestVersionNumber",
+            ],
+          },
+        },
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "EC2SecurityGroup05DEE054",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": "p-12345",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "snapshot/test/pgadmin/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "UserData": {
+          "Fn::Base64": "#!/bin/bash
+yum update -y
+yum -y install docker
+systemctl start docker
+systemctl enable docker
+docker run --restart=always --name pgadmin4 -e "PGADMIN_DEFAULT_EMAIL=pgadmin4@example.com" -e "PGADMIN_DEFAULT_PASSWORD=pasword" -d -p 5050:80 dpage/pgadmin4",
+        },
+      },
+      "Type": "AWS::EC2::Instance",
+    },
+    "EC2Instance1InstanceProfileF359155E": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "EC2Instance1InstanceRole34EB269B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "EC2Instance1InstanceRole34EB269B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonSSMManagedInstanceCore",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "snapshot/test/pgadmin/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EC2Instance1LaunchTemplate1B7F9B1D": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+        },
+        "LaunchTemplateName": "EC2Instance1LaunchTemplate",
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "EC2SecurityGroup05DEE054": {
+      "Properties": {
+        "GroupDescription": "VPCStack/EC2SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": "vpc-12345",
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EC2StartRule": {
+      "Properties": {
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "EC2Instance14196AB1A",
+              },
+              " cron(0 0 ? * MON-FRI *) Start",
+            ],
+          ],
+        },
+        "Name": "snapshot-test-EC2StartRule",
+        "ScheduleExpression": "cron(0 0 ? * MON-FRI *)",
+        "Targets": [
+          {
+            "Arn": "arn:aws:ssm:ap-northeast-1::automation-definition/AWS-StartEC2Instance:$DEFAULT",
+            "Id": "TargetEC2Instance1",
+            "Input": {
+              "Fn::Join": [
+                "",
+                [
+                  "{"InstanceId": ["",
+                  {
+                    "Ref": "EC2Instance14196AB1A",
+                  },
+                  ""]}",
+                ],
+              ],
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "EC2startstopRoleA8970F74",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "EC2StopRule": {
+      "Properties": {
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              {
+                "Ref": "EC2Instance14196AB1A",
+              },
+              " cron(0 9 ? * MON-FRI *) Stop",
+            ],
+          ],
+        },
+        "Name": "snapshot-test-EC2StopRule",
+        "ScheduleExpression": "cron(0 9 ? * MON-FRI *)",
+        "Targets": [
+          {
+            "Arn": "arn:aws:ssm:ap-northeast-1::automation-definition/AWS-StopEC2Instance:$DEFAULT",
+            "Id": "TargetEC2Instance1",
+            "Input": {
+              "Fn::Join": [
+                "",
+                [
+                  "{"InstanceId": ["",
+                  {
+                    "Ref": "EC2Instance14196AB1A",
+                  },
+                  ""]}",
+                ],
+              ],
+            },
+            "RoleArn": {
+              "Fn::GetAtt": [
+                "EC2startstopRoleA8970F74",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "EC2startstopRoleA8970F74": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonSSMAutomationRole",
+              ],
+            ],
+          },
+        ],
+        "RoleName": "snapshot-test-PgAdminStopStart",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "KeyPair1622897B": {
+      "Properties": {
+        "KeyFormat": "pem",
+        "KeyName": "VPCStack-ec2-KeyPair",
+        "KeyType": "rsa",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::KeyPair",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

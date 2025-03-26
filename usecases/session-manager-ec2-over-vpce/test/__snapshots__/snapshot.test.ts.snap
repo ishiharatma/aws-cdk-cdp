@@ -1,0 +1,1430 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot validation test 1`] = `
+{
+  "Description": "Session Manager EC2 Over VPCE",
+  "Outputs": {
+    "EC2InstanceKeyPairId": {
+      "Value": {
+        "Fn::GetAtt": [
+          "KeyPair1622897B",
+          "KeyPairId",
+        ],
+      },
+    },
+    "EC2InstanceLinuxInstanceId": {
+      "Value": {
+        "Ref": "EC2InstanceLinux01F50956",
+      },
+    },
+    "EC2InstanceLinuxPrivateIp": {
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2InstanceLinux01F50956",
+          "PrivateIp",
+        ],
+      },
+    },
+    "EC2InstanceWindowsInstanceId": {
+      "Value": {
+        "Ref": "EC2InstanceWindowsC34A9C21",
+      },
+    },
+    "EC2InstanceWindowsPrivateIp": {
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2InstanceWindowsC34A9C21",
+          "PrivateIp",
+        ],
+      },
+    },
+    "FlowLogsBucketName": {
+      "Value": {
+        "Ref": "FlowLogsBucket8912DCDB",
+      },
+    },
+    "GetSSHKeyCommand": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "aws ssm get-parameter --name /ec2/keypair/",
+            {
+              "Fn::GetAtt": [
+                "KeyPair1622897B",
+                "KeyPairId",
+              ],
+            },
+            " --region ap-northeast-1 --with-decryption --query Parameter.Value --output text",
+          ],
+        ],
+      },
+    },
+    "KMSKeyId": {
+      "Value": {
+        "Ref": "Key961B73FD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61arm64C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+    },
+    "SsmParameterValueawsserviceamiwindowslatestWindowsServer2022EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Default": "/aws/service/ami-windows-latest/Windows_Server-2022-English-Full-Base",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+    },
+  },
+  "Resources": {
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "FlowLogsBucket8912DCDB",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E": {
+      "DependsOn": [
+        "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "7fa1e366ee8a9ded01fc355f704cff92bfd179574e6f9cfee800a3541df1b200.zip",
+        },
+        "Description": "Lambda function for removing all inbound/outbound rules from the VPC default security group",
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs20.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomVpcRestrictDefaultSGCustomResourceProviderRole26592FE0": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ec2:AuthorizeSecurityGroupIngress",
+                    "ec2:AuthorizeSecurityGroupEgress",
+                    "ec2:RevokeSecurityGroupIngress",
+                    "ec2:RevokeSecurityGroupEgress",
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":ec2:ap-northeast-1:123456789012:security-group/",
+                          {
+                            "Fn::GetAtt": [
+                              "MyVpcF9F0CA6F",
+                              "DefaultSecurityGroup",
+                            ],
+                          },
+                        ],
+                      ],
+                    },
+                  ],
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EC2InstanceLinux01F50956": {
+      "DependsOn": [
+        "EC2InstanceLinuxInstanceRole6DF15172",
+      ],
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceLinuxInstanceProfile89805569",
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestal2023amikernel61arm64C96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "InstanceType": "t4g.nano",
+        "KeyName": {
+          "Ref": "KeyPair1622897B",
+        },
+        "LaunchTemplate": {
+          "LaunchTemplateName": "EC2InstanceLinuxLaunchTemplate",
+          "Version": {
+            "Fn::GetAtt": [
+              "EC2InstanceLinuxLaunchTemplate4E0C1206",
+              "LatestVersionNumber",
+            ],
+          },
+        },
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "EC2SecurityGroup05DEE054",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/test/linux/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "UserData": {
+          "Fn::Base64": "#!/bin/bash",
+        },
+      },
+      "Type": "AWS::EC2::Instance",
+    },
+    "EC2InstanceLinuxInstanceProfile89805569": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "EC2InstanceLinuxInstanceRole6DF15172",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "EC2InstanceLinuxInstanceRole6DF15172": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonSSMManagedInstanceCore",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/test/linux/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EC2InstanceLinuxLaunchTemplate4E0C1206": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+        },
+        "LaunchTemplateName": "EC2InstanceLinuxLaunchTemplate",
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "EC2InstanceWindowsC34A9C21": {
+      "DependsOn": [
+        "EC2InstanceWindowsInstanceRoleA15538BB",
+      ],
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "IamInstanceProfile": {
+          "Ref": "EC2InstanceWindowsInstanceProfile2FB5E775",
+        },
+        "ImageId": {
+          "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2022EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+        "InstanceType": "t3a.medium",
+        "KeyName": {
+          "Ref": "KeyPair1622897B",
+        },
+        "LaunchTemplate": {
+          "LaunchTemplateName": "EC2InstanceWindowsLaunchTemplate",
+          "Version": {
+            "Fn::GetAtt": [
+              "EC2InstanceWindowsLaunchTemplate3894919F",
+              "LatestVersionNumber",
+            ],
+          },
+        },
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "EC2SecurityGroup05DEE054",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/test/windows/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "UserData": {
+          "Fn::Base64": "<powershell></powershell>",
+        },
+      },
+      "Type": "AWS::EC2::Instance",
+    },
+    "EC2InstanceWindowsInstanceProfile2FB5E775": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "EC2InstanceWindowsInstanceRoleA15538BB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "EC2InstanceWindowsInstanceRoleA15538BB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonSSMManagedInstanceCore",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/test/windows/instance",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EC2InstanceWindowsLaunchTemplate3894919F": {
+      "Properties": {
+        "LaunchTemplateData": {
+          "MetadataOptions": {
+            "HttpTokens": "required",
+          },
+        },
+        "LaunchTemplateName": "EC2InstanceWindowsLaunchTemplate",
+      },
+      "Type": "AWS::EC2::LaunchTemplate",
+    },
+    "EC2SecurityGroup05DEE054": {
+      "Properties": {
+        "GroupDescription": "SessionManagerEc2OverVpceStack/EC2SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "FlowLogsBucket8912DCDB": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AccessControl": "Private",
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "KMSMasterKeyID": {
+                  "Fn::GetAtt": [
+                    "Key961B73FD",
+                    "Arn",
+                  ],
+                },
+                "SSEAlgorithm": "aws:kms",
+              },
+            },
+          ],
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "FlowLogsBucketAutoDeleteObjectsCustomResource261C6D2B": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "FlowLogsBucketPolicy49FA954A",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "FlowLogsBucket8912DCDB",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "FlowLogsBucketPolicy49FA954A": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "FlowLogsBucket8912DCDB",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "FlowLogsBucket8912DCDB",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "FlowLogsBucket8912DCDB",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "Key961B73FD": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "Description": "for VPC Flow log",
+        "EnableKeyRotation": true,
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": "kms:*",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::123456789012:root",
+                    ],
+                  ],
+                },
+              },
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "delivery.logs.amazonaws.com",
+              },
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "KeyAlias910D852D": {
+      "Properties": {
+        "AliasName": "alias/SessionManagerEc2OverVpceStack-for-flowlog",
+        "TargetKeyId": {
+          "Fn::GetAtt": [
+            "Key961B73FD",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::KMS::Alias",
+    },
+    "KeyPair1622897B": {
+      "Properties": {
+        "KeyFormat": "pem",
+        "KeyName": "SessionManagerEc2OverVpceStack-ec2-KeyPair",
+        "KeyType": "rsa",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::KeyPair",
+    },
+    "MyVpcF9F0CA6F": {
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "MyVpcFlowLogsFlowLogF83C1C7A": {
+      "DependsOn": [
+        "FlowLogsBucketAutoDeleteObjectsCustomResource261C6D2B",
+        "FlowLogsBucketPolicy49FA954A",
+      ],
+      "Properties": {
+        "LogDestination": {
+          "Fn::GetAtt": [
+            "FlowLogsBucket8912DCDB",
+            "Arn",
+          ],
+        },
+        "LogDestinationType": "s3",
+        "ResourceId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+        "ResourceType": "VPC",
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/FlowLogs",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "TrafficType": "ALL",
+      },
+      "Type": "AWS::EC2::FlowLog",
+    },
+    "MyVpcIGW5C4A4F63": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "MyVpcIsolatedSubnetSubnet1RouteTableAssociation4F6F5B7B": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet1SubnetBEB69234",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet1RouteTableDE4E2393": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet1SubnetBEB69234": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.4.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/IsolatedSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcIsolatedSubnetSubnet2RouteTableAssociation0542B7DC": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2RouteTable9E8E775E",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcIsolatedSubnetSubnet2Subnet4DC0B981": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.5.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "IsolatedSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Isolated",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/IsolatedSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet1RouteTableAssociation2811D7AF": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1RouteTableD918A34F",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPrivateSubnetSubnet1RouteTableD918A34F": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PrivateSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPrivateSubnetSubnet1SubnetE8BD536C": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.2.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PrivateSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PrivateSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PrivateSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPrivateSubnetSubnet2RouteTableAssociationE7A10A88": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPrivateSubnetSubnet2RouteTable83C86AF7",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.3.0/24",
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PrivateSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PrivateSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPublicSubnetSubnet1DefaultRoute2D379878": {
+      "DependsOn": [
+        "MyVpcVPCGW488ACE0D",
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "MyVpcIGW5C4A4F63",
+        },
+        "RouteTableId": {
+          "Ref": "MyVpcPublicSubnetSubnet1RouteTable00654ADB",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "MyVpcPublicSubnetSubnet1RouteTable00654ADB": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PublicSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPublicSubnetSubnet1RouteTableAssociation2CCE9CDC": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPublicSubnetSubnet1RouteTable00654ADB",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPublicSubnetSubnet1Subnet60D1320D",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPublicSubnetSubnet1Subnet60D1320D": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.0.0/24",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PublicSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PublicSubnetSubnet1",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcPublicSubnetSubnet2DefaultRouteAFC76296": {
+      "DependsOn": [
+        "MyVpcVPCGW488ACE0D",
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "MyVpcIGW5C4A4F63",
+        },
+        "RouteTableId": {
+          "Ref": "MyVpcPublicSubnetSubnet2RouteTableC647F413",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "MyVpcPublicSubnetSubnet2RouteTableAssociation7AF8666E": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "MyVpcPublicSubnetSubnet2RouteTableC647F413",
+        },
+        "SubnetId": {
+          "Ref": "MyVpcPublicSubnetSubnet2Subnet122ADB1B",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "MyVpcPublicSubnetSubnet2RouteTableC647F413": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PublicSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "MyVpcPublicSubnetSubnet2Subnet122ADB1B": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.1.0/24",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "PublicSubnet",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/MyVpc/PublicSubnetSubnet2",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "MyVpcRestrictDefaultSecurityGroupCustomResourceA4FCCD62": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Account": "123456789012",
+        "DefaultSecurityGroupId": {
+          "Fn::GetAtt": [
+            "MyVpcF9F0CA6F",
+            "DefaultSecurityGroup",
+          ],
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomVpcRestrictDefaultSGCustomResourceProviderHandlerDC833E5E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::VpcRestrictDefaultSG",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MyVpcSsmEndpointForPrivateEC2Messages411C1884": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "VpcEndpointSecurityGroup02EA44AC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.ap-northeast-1.ec2messages",
+        "SubnetIds": [
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+          },
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "MyVpcSsmEndpointForPrivateSSM524C75E4": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "VpcEndpointSecurityGroup02EA44AC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.ap-northeast-1.ssm",
+        "SubnetIds": [
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+          },
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "MyVpcSsmEndpointForPrivateSSMMessagesC75F8E46": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "VpcEndpointSecurityGroup02EA44AC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.ap-northeast-1.ssmmessages",
+        "SubnetIds": [
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet1SubnetE8BD536C",
+          },
+          {
+            "Ref": "MyVpcPrivateSubnetSubnet2SubnetE3BFCF91",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Name",
+            "Value": "SessionManagerEc2OverVpceStack/VPC/123456789012",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "MyVpcVPCGW488ACE0D": {
+      "Properties": {
+        "InternetGatewayId": {
+          "Ref": "MyVpcIGW5C4A4F63",
+        },
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+    "VpcEndpointSecurityGroup02EA44AC": {
+      "Properties": {
+        "GroupDescription": "security group for vpc endpoint",
+        "GroupName": "snapshot-test-vpce",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
+                "MyVpcF9F0CA6F",
+                "CidrBlock",
+              ],
+            },
+            "Description": "allow VPC Endpoint from My VPC.",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Environment",
+            "Value": "test",
+          },
+          {
+            "Key": "Project",
+            "Value": "snapshot",
+          },
+        ],
+        "VpcId": {
+          "Ref": "MyVpcF9F0CA6F",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
