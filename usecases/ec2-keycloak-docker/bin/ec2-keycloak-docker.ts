@@ -10,8 +10,17 @@ const app = new cdk.App();
 // environment identifier
 const pjName: string = app.node.tryGetContext('project');
 const envName: string = app.node.tryGetContext('env');
+
+// 環境変数からIPアドレスを取得する
+const ipsFromEnv = process.env.IPS;
+const ips: string[] = ipsFromEnv ? ipsFromEnv.split(',') : [
+  '0.0.0.0/1',
+  '128.0.0.0/1',
+];
 const parameterFile: string = path.join(__dirname, `../parameters/${pjName}-${envName}.yaml`);
 const envVals: IYamlProps = loadConfig(parameterFile);
+
+console.log(`IpAddresses: ${ips}`);
 
 // env
 const defaultEnv = {
@@ -50,10 +59,7 @@ new Ec2KeycloakDockerStack(app, 'Ec2KeycloakDockerStack', {
   keycloakAdmin: envVals.LoginId,
   keycloakAdminPassword : envVals.LoginPassword,
   isPublic: true,
-  ipAddresses: [
-    '0.0.0.0/1',
-    '128.0.0.0/1',
-  ],
+  ipAddresses: ips,
   startSchedule: envVals.EC2startSchedule,
   stopSchedule: envVals.EC2stopSchedule,
   isAutoDeleteObject: isAutoDeleteObject,

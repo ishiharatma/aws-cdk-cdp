@@ -32,9 +32,9 @@ const useast1Env = {
 };
 const uswest2Env = {
   // US West (Oregon)
-  account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: "us-east-1",
-};
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: "us-west-2",
+  };
 
 // 環境別設定ファイルの読み込み
 const envVals: IYamlProps = loadConfig(`./parameters/${pjName}-${envName}.yaml`);

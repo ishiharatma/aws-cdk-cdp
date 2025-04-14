@@ -40,9 +40,16 @@ export class Ec2KeycloakDockerStack extends cdk.Stack {
     });
     ec2SecurityGroup.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.HTTPS, 'Allow HTTPS access to anywhere');
 
-    for (const ip of props.ipAddresses ?? []) {
-      ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.HTTP, 'Allow HTTP access from the IP address');
-      ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.HTTPS, 'Allow HTTPS access from the IP address');
+    if (props.isPublic) {
+      for (const ip of props.ipAddresses ?? []) {
+        ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.tcp(9000), 'Allow Helthcheck Port from the IP address');
+        ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.HTTP, 'Allow HTTP access from the IP address');
+        ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(ip), ec2.Port.HTTPS, 'Allow HTTPS access from the IP address');
+      }
+    } else {
+      ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.tcp(9000), 'Allow Helthcheck Port from VPC');
+      ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.HTTP, 'Allow HTTP access from VPC');
+      ec2SecurityGroup.addIngressRule(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.HTTPS, 'Allow HTTPS access from VPC');
     }
 
     new cdk.CfnOutput(this, 'EC2SecurityGroupId', {
@@ -61,7 +68,6 @@ export class Ec2KeycloakDockerStack extends cdk.Stack {
     })
     const userData = ec2.UserData.forLinux({ shebang: '#!/bin/bash' });
     const keycloakVersion = '26.1.4';
-    const keycloakRemotePort = '80';
     const dockerComposeVersion = 'v2.34.0';
     userData.addCommands(
       'yum update -y',
@@ -80,18 +86,23 @@ export class Ec2KeycloakDockerStack extends cdk.Stack {
       // or
       // https://hub.docker.com/r/keycloak/keycloak/tags
       'docker run --restart=always --name keycloak ' + 
-      `-e "KEYCLOAK_ADMIN=${props.keycloakAdmin}" ` +
-      `-e "KEYCLOAK_ADMIN_PASSWORD=${props.keycloakAdminPassword}" ` +
+      // `-e "KEYCLOAK_ADMIN=${props.keycloakAdmin}" ` + // deprecated
+      `-e "KC_BOOTSTRAP_ADMIN_USERNAME=${props.keycloakAdmin}" ` +
+      //`-e "KEYCLOAK_ADMIN_PASSWORD=${props.keycloakAdminPassword}" ` + // deprecated
+      `-e "KC_BOOTSTRAP_ADMIN_PASSWORD=${props.keycloakAdminPassword}" ` +
       `-e "TZ='Asia/Tokyo'" ` +
-      `-e "KC_HTTP_ENABLED='true'" ` +
-      `-d -p 8080:${keycloakRemotePort} quay.io/keycloak/keycloak:${keycloakVersion} start-dev`,
+      `-e "KC_HTTP_ENABLED=true" ` +
+      `-e "KC_HOSTNAME_STRICT=false" ` +
+      `-e "KC_HOSTNAME_STRICT_HTTPS=false" ` +
+      `-e "KC_HEALTH_ENABLED=true" ` +
+      `-d -p 80:8080 -p 443:8443 -p 9000:9000 quay.io/keycloak/keycloak:${keycloakVersion} start-dev`,
     );
 
     // Create an EC2 instance for connection testing
     this.instance = new ec2.Instance(this, 'EC2Instance1', {
       vpc: vpc,
       instanceName: [props.pjName, props.envName, 'keycloak', 'instance'].join('/') ,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.NANO),
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.SMALL),
       machineImage: ec2.MachineImage.latestAmazonLinux2023({
         edition: ec2.AmazonLinuxEdition.STANDARD,
         cpuType: ec2.AmazonLinuxCpuType.ARM_64 //X86_64, 

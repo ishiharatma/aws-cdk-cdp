@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { CicdSamApigwLambdaStack } from '../lib/cicd-sam-apigw-lambda-stack';
+import { CloudfrontVpcOriginEc2WithNginxStack } from '../lib/cloudfront-vpc-origin-ec2-with-nginx-stack';
+
 
 const app = new cdk.App();
 
 // environment identifier
-const envName: string = app.node.tryGetContext('env');
-const pjName: string = app.node.tryGetContext('project');
+const pjName: string = "sample"; //app.node.tryGetContext('project');
+const envName: string = "dev"; //app.node.tryGetContext('env');
 // env
 const defaultEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -24,7 +25,6 @@ const uswest2Env = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
   region: "us-west-2",
 };
-
 // Whether to force delete an S3 bucket even if objects exist
 // Determine by environment identifier
 //const isAutoDeleteObject:boolean = envName.match(/^(dev|test|stage)$/) ? true: false;
@@ -36,16 +36,18 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 
-new CicdSamApigwLambdaStack(app, `CicdSamApigwLambdaStack-${pjName}-${envName}`, {
+new CloudfrontVpcOriginEc2WithNginxStack(app, 'CloudfrontVpcOriginEc2WithNginxStack', {
+  stackName:  `CloudfrontVpcOriginEc2WithNginxStack-${pjName}-${envName}`,
+  description: 'CloudFront with VPC Origin and Nginx',
   pjName: pjName,
   envName: envName,
-  repositoryName: 'sam-apigw',
-  repositoryRegion: 'ap-northeast-1',
-  repositoryAccountId: process.env.CDK_DEFAULT_ACCOUNT!,
-  branchName: 'development',
+  cloudFrontPrefixList: "pl-58a04531",
+  apiKey: "1234567890",
+  isAutoDeleteObject: isAutoDeleteObject,
   env: defaultEnv,
   terminationProtection: isTerminationProtection, // Enabling deletion protection
 });
+
 // --------------------------------- Tagging  -------------------------------------
 cdk.Tags.of(app).add('Project', pjName);
 cdk.Tags.of(app).add('Environment', envName);

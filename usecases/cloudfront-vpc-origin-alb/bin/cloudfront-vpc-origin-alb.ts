@@ -22,7 +22,7 @@ account: process.env.CDK_DEFAULT_ACCOUNT,
 const uswest2Env = {
 // US West (Oregon)
   account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: "us-east-1",
+  region: "us-west-2",
 };
 // Whether to force delete an S3 bucket even if objects exist
 // Determine by environment identifier
@@ -35,10 +35,11 @@ const isAutoDeleteObject = true;
 // Since it is a test, it can be deleted
 const isTerminationProtection=false;
 new CloudfrontVpcOriginAlbStack(app, 'CloudfrontVpcOriginAlbStack', {
+  stackName: `CloudfrontVpcOriginAlbStack-${pjName}-${envName}`,
+  description: 'CloudFront with VPC Origin and ALB',
   pjName: pjName,
   envName: envName,
   prefixList: "pl-58a04531",
-  description: 'CloudFront with VPC Origin and ALB',
   isAutoDeleteObject: isAutoDeleteObject,
   env: defaultEnv,
   terminationProtection: isTerminationProtection, // Enabling deletion protection

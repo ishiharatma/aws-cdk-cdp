@@ -18,7 +18,7 @@ const useast1Env = {
 const uswest2Env = {
     // US West (Oregon)
     account: '123456789012',
-    region: "us-east-1",
+    region: "us-west-2",
 };
 
 const projectName: string = 'snapshot';

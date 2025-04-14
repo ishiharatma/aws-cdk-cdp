@@ -25,11 +25,10 @@ const useast1Env = {
     region: "us-east-1",
   };
 const uswest2Env = {
-  // US West (Oregon)
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: "us-east-1",
-  };
-
+// US West (Oregon)
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: "us-west-2",
+};
 
 // Whether to force delete an S3 bucket even if objects exist
 // Determine by environment identifier
