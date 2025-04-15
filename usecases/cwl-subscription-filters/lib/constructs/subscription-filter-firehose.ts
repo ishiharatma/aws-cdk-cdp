@@ -25,6 +25,7 @@ export class SubscriptionFilterFirehoseConstruct extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       logGroupName: '/aws/cwl-subscription-filters/firehose',
     });
+
     // 宛先S3バケット
     const s3Bucket = new s3.Bucket(this, 'CwlSubscriptionFiltersS3Bucket', {
       bucketName: 'cwl-subscription-filters-s3-bucket',
@@ -48,7 +49,7 @@ export class SubscriptionFilterFirehoseConstruct extends Construct {
       },
     });
     s3Bucket.grantReadWrite(firehoseRole);
-    
+
     // サブスクリプションフィルター
     // see: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_kinesisfirehose.DeliveryStream.html
     const firehoseDeliveryStream = new firehose.DeliveryStream(this, 'CwlSubscriptionFiltersFirehose', {
