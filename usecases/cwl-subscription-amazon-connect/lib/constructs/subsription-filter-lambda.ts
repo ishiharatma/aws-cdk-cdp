@@ -9,6 +9,7 @@ import * as path from "path";
 
 interface LambdaProps {
   readonly snsTopicArn: string;
+  readonly lambdaLogLevel: string;
 }
 
 export class SubscriptionFilterLambda extends Construct {
@@ -47,17 +48,22 @@ export class SubscriptionFilterLambda extends Construct {
     this.logsToSnsFunction = new PythonFunction(this, logsToSnsName, {
       runtime: lambda.Runtime.PYTHON_3_13,
       timeout: cdk.Duration.seconds(60),
-      entry: path.join(__dirname, '../../../common/src/lambda/logs-to-sns/python'),
+      entry: '../common/src/lambda/logs-to-sns/python',
       index: "index.py",
-      handler: "index.lambda_handler",
+      handler: "lambda_handler",
       role,
       environment: {
         SNS_TOPIC_ARN: snsTopicArn,
       },
       bundling: {
         platform: "linux/amd64",
+        bundlingFileAccess: cdk.BundlingFileAccess.VOLUME_COPY,
       },
       loggingFormat: lambda.LoggingFormat.JSON,
+      applicationLogLevelV2:
+        lambda.ApplicationLogLevel[
+          props.lambdaLogLevel as keyof typeof lambda.ApplicationLogLevel
+        ],
       logGroup: new logs.LogGroup(this, `${pascalCase(logsToSnsName)}LogGroup`, {
         logGroupName : logsToSnsLogGroupName,
         removalPolicy: cdk.RemovalPolicy.DESTROY,

@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+#logger.setLevel(logging.INFO)
 
 # 環境変数
 CALL_STATUS_TABLE = os.environ.get('CALL_STATUS_TABLE', 'CallStatus')
@@ -17,7 +17,7 @@ CALL_HISTORY_TABLE = os.environ.get('CALL_HISTORY_TABLE', 'CallHistory')
 CONNECT_INSTANCE_REGION_NAME = os.environ.get('CONNECT_INSTANCE_REGION_NAME', "")
 CONNECT_INSTANCE_ID = os.environ.get('CONNECT_INSTANCE_ID')
 CONNECT_CONTACT_FLOW_ID = os.environ.get('CONNECT_CONTACT_FLOW_ID')
-CONNECT_SOURCE_PHONE = os.environ.get('CALLER_PHONE_NUMBER')
+CALLER_PHONE_NUMBER = os.environ.get('CALLER_PHONE_NUMBER')
 RESPONDERS_GROUP_ID = os.environ.get('RESPONDERS_GROUP_ID', 'default')
 HISTORY_TTL_DAYS = os.environ.get('HISTORY_TTL_DAYS', 30)
 
@@ -157,7 +157,7 @@ def initiate_call(responders, error_id, error_message):
                 InstanceId=CONNECT_INSTANCE_ID,
                 ContactFlowId=CONNECT_CONTACT_FLOW_ID,
                 DestinationPhoneNumber=responder['phoneNumber'],
-                SourcePhoneNumber=CONNECT_SOURCE_PHONE,
+                SourcePhoneNumber=CALLER_PHONE_NUMBER,
                 Attributes={
                     'errorId': error_id,
                     'errorMessage': error_message,
@@ -296,8 +296,8 @@ def get_timestamp():
 
 def lambda_handler(event, context):
     # コンタクトフローを指定して電話を掛ける
-    logLevel = os.environ.get('LOG_LEVEL', 'INFO')
-    logger.setLevel(logLevel)
+    #logLevel = os.environ.get('LOG_LEVEL', 'INFO')
+    #logger.setLevel(logLevel)
     assined = False
     try:
         logger.info('Received event: {}'.format(json.dumps(event)))
@@ -325,7 +325,7 @@ def lambda_handler(event, context):
         call_status = get_call_status()
         # 架電中の場合は履歴に記録して終了
         if call_status and call_status.get('status') == "calling":
-            print('Call already in progress, skipping this error notification')
+            logger.warning('Call already in progress, skipping this error notification')
             record_history(error_id, get_timestamp(), "skipped_calling", error_message)
             return {
                 'statusCode': 200,
@@ -374,6 +374,12 @@ def lambda_handler(event, context):
     except Exception as error:
         logger.error("Amazon Connectへの連係に失敗")
         logger.error(error)
+        try:
+            # 架電状況をクリア
+            update_call_status("idle")
+        except Exception as update_error:
+            logger.error("Failed to update call status")
+            logger.error(update_error)
         return {'statusCode': 400 }
     finally:
         logger.info('Function complete')

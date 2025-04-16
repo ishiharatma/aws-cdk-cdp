@@ -1,12 +1,15 @@
 import urllib3
 import json
 import logging
+import os
 
 # ロギングの設定
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+#logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
+    #logLevel = os.environ.get('LOG_LEVEL', 'INFO')
+    #logger.setLevel(logLevel)
     try:
         logger.info('Received event: {}'.format(json.dumps(event)))
         # SNSメッセージを取得
@@ -18,18 +21,18 @@ def lambda_handler(event, context):
         message = sns_message["Message"]
         messageAttributes = sns_message["MessageAttributes"]
         
-        logger.info('SNS message: {}'.format(json.dumps(sns_message)))
-        logger.info('topic_arn: {}'.format(topic_arn))
-        logger.info('MessageId: {}'.format(MessageId))
-        logger.info('subject: {}'.format(subject))
-        logger.info('type: {}'.format(type))
-        logger.info('message: {}'.format(json.dumps(message)))
+        logger.debug('SNS message: {}'.format(json.dumps(sns_message)))
+        logger.debug('topic_arn: {}'.format(topic_arn))
+        logger.debug('MessageId: {}'.format(MessageId))
+        logger.debug('subject: {}'.format(subject))
+        logger.debug('type: {}'.format(type))
+        logger.debug('message: {}'.format(json.dumps(message)))
 
         # messageAttributesに、severity/logGroup/logStream/eventSourceId/eventTimeが存在したらログ出力
         atts = ["severity", "logGroup", "logStream", "eventSourceId", "eventTime"]
         for att in atts:
             if att in messageAttributes:
-                logger.info('{}: {}'.format(att, messageAttributes[att]["Value"]))
+                logger.debug('{}: {}'.format(att, messageAttributes[att]["Value"]))
 
         return {
             'statusCode': 200,
@@ -43,4 +46,4 @@ def lambda_handler(event, context):
             'body': json.dumps(str(e))
         }
     finally:
-        logger.info('complete')
+        logger.info('Function complete')

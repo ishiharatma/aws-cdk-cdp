@@ -30,7 +30,7 @@
 		// https://aws.amazon.com/cdk/
 		// TypeScript API reference: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-construct-library.html
 		// https://github.com/danielbraun89/devcontainer-features/tree/main/src/aws-cdk
-		"ghcr.io/devcontainers-contrib/features/aws-cdk:2": {}
+		"ghcr.io/devcontainers-contrib/features/aws-cdk:2": {},
 
 		// AWS SSO Util to simplify authentication with AWS SSO
 		// Uncomment if you prefer using static AWS IAM keys
@@ -41,7 +41,7 @@
 		// Using these features saves you from writing custom installation scripts for tools you need
 
 		// Docker in Docker - allows you to create Docker containers within your development environment
-		// "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 		
 		// Claude Code feature (if needed)
 		// "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}

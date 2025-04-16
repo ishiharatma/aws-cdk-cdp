@@ -27,6 +27,7 @@ export class CwlSubscriptionAmazonConnectStack extends cdk.Stack {
       callHistoryTableName: "CallHistory",
       outboundCallerLambdaName: "ConnectOutboundCaller",
       snsTopic: opsSns.topics["critical"],
+      lambdaLogLevel: params.lambda.lambdaLogLevel ?? "INFO",
     });
 
   }

@@ -6,9 +6,11 @@ from urllib.request import Request, urlopen
 
 # ロギングの設定
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+#logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
+    #logLevel = os.environ.get('LOG_LEVEL', 'INFO')
+    #logger.setLevel(logLevel)
     try:
         logger.info('Received event: %s', json.dumps(event))
         # 環境変数から取得
@@ -51,7 +53,7 @@ def lambda_handler(event, context):
         req = Request(slack_webhook_url, json.dumps(slack_message).encode('utf-8'))
         
         response_body = urlopen(req).read().decode('utf-8')
-        logger.debug("response_body: {}".format(response_body)
+        logger.debug("response_body: {}".format(response_body))
 
         # 結果をログに出力
         logger.debug({
@@ -76,4 +78,4 @@ def lambda_handler(event, context):
             'body': json.dumps(str(e))
         }
     finally:
-        logger.info('complete')
+        logger.info('Function complete')

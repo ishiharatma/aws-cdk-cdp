@@ -7,7 +7,7 @@ import logging
 
 # ロギングの設定
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+#logger.setLevel(logging.INFO)
 
 # SNSクライアントの初期化
 sns = boto3.client('sns')

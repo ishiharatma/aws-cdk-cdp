@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { LogPolicyAspect } from "../aspect/log-policy";
 import { BaseStack } from "../stack/base-stack";
+import { LogGroupStack } from "../stack/log-group-stack";
 import { CwlSubscriptionAmazonConnectStack } from "../stack/cwl-subscription-amazon-connect-stack";
 
 interface myStageProps extends cdk.StageProps {
@@ -15,6 +16,8 @@ export class myStage extends cdk.Stage {
 
     const params = props.params;
     const baseStackName = "baseStackName";
+    const pjName = params.project || "project";
+    const envName = id;
 
     const baseStack = new BaseStack(this, 'BaseStack', {
         stackName: baseStackName,
@@ -29,8 +32,18 @@ export class myStage extends cdk.Stage {
       baseStack.subscriptionFilterLambda,
     );
 
-    cdk.Aspects.of(baseStack).add(logPolicyAspect);
-
+    // 新しいロググループスタックを追加
+    const logGroupStack = new LogGroupStack(this, 'LogGroupStack', {
+      stackName: `${baseStackName}LogGroup`,
+      pjName,
+      envName,
+      params,
+      env: {
+        account: params.env.account,
+        region: params.env.region,
+      },
+    });
+    cdk.Aspects.of(logGroupStack).add(logPolicyAspect);
 
     const amazonConnectOutboundCallerStack = new CwlSubscriptionAmazonConnectStack(
       this,`AmazonConnectOutboundCaller`, {
@@ -42,6 +55,5 @@ export class myStage extends cdk.Stage {
           region: params.env.region,
         },
       });
-
   }
 }

@@ -14,7 +14,14 @@
     "cdk:diff:all": "cdk diff --all --version-reporting false --path-metadata false --asset-metadata false --profile %npm_config_profile%",
     "cdk:deploy:all": "cdk deploy --all --version-reporting false --path-metadata false --asset-metadata false --profile %npm_config_profile%",
     "cdk:destroy:all": "cdk destroy --all --profile %npm_config_profile%",
-    "cdk:destroy:forceall": "cdk destroy --all --profile %npm_config_profile% --force"
+    "cdk:destroy:forceall": "cdk destroy --all --profile %npm_config_profile% --force",
+    "linux:cdk:bootstrap": "cdk bootstrap --profile $npm_config_profile",
+    "linux:cdk:synth": "cdk synth --version-reporting false --path-metadata false --asset-metadata false --profile $npm_config_profile",
+    "linux:cdk:diff:all": "cdk diff --all --version-reporting false --path-metadata false --asset-metadata false --profile $npm_config_profile",
+    "linux:cdk:deploy:stage": "cdk deploy --version-reporting false --path-metadata false --asset-metadata false --profile $npm_config_profile",
+    "linux:cdk:deploy:all": "cdk deploy --all --version-reporting false --path-metadata false --asset-metadata false --profile $npm_config_profile",
+    "linux:cdk:destroy:all": "cdk destroy --all --profile $npm_config_profile",
+    "linux:cdk:destroy:forceall": "cdk destroy --all --profile $npm_config_profile --force"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

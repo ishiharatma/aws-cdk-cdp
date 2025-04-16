@@ -27,28 +27,14 @@ export class BaseStack extends cdk.Stack {
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
       ],
-      inlinePolicies: {
-        // SNS Publish Policy
-        "SnsPublishPolicy": new iam.PolicyDocument({
-          statements: [
-            new iam.PolicyStatement({
-              effect: iam.Effect.ALLOW,
-              actions: [
-                "sns:Publish",
-              ],
-              resources: [
-                params.snsTopicArn,
-              ],
-            }),
-          ],
-        }),
-      },
+      inlinePolicies: {},
     });
 
     // 監視系リソース
     this.opsLambda = new Lambda(this, "OpsLambda", {
       role: lambdaFunctionRole,
       slackWebhookUrl: params.ops.webhookUrl,
+      lambdaLogLevel: params.lambda.lambdaLogLevel ?? "INFO",
     });
     
     // SNS監視通知リソース
@@ -69,6 +55,7 @@ export class BaseStack extends cdk.Stack {
 
     this.subscriptionFilterLambda = new SubscriptionFilterLambda(this, "SubscriptionFilterLambda", {
       snsTopicArn: this.opsSns.topics["critical"].topicArn,
+      lambdaLogLevel: params.lambda.lambdaLogLevel ?? "INFO",
     });
 
 

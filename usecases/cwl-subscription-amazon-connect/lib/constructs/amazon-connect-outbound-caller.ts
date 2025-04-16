@@ -3,6 +3,8 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as sns from "aws-cdk-lib/aws-sns";
+import * as subs from "aws-cdk-lib/aws-sns-subscriptions";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { PythonFunction } from "@aws-cdk/aws-lambda-python-alpha";
 import { kebabCase, pascalCase } from "change-case-commonjs";
 import { Construct } from "constructs";
@@ -34,6 +36,7 @@ export interface AmazonConnectProps {
   readonly callHistoryTableName: string;
   readonly outboundCallerLambdaName: string;
   readonly snsTopic?: sns.ITopic;
+  readonly lambdaLogLevel: string;
 }
 
 export class AmazonConnect extends Construct {
@@ -54,9 +57,10 @@ export class AmazonConnect extends Construct {
     - timestamp (Number): 最終更新時間（Unix timestamp）
     - errorId (String): 現在処理中のエラーID
     */
-    const callStatusTable = new cdk.aws_dynamodb.Table(this, props.callStatusTableName, {
-      partitionKey: { name: "statusId", type: cdk.aws_dynamodb.AttributeType.STRING },
-      billingMode: cdk.aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+    const callStatusTable = new dynamodb.Table(this, props.callStatusTableName, {
+      tableName: props.callStatusTableName,
+      partitionKey: { name: "statusId", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     // 対応状況テーブル
@@ -67,9 +71,10 @@ export class AmazonConnect extends Construct {
     - description (String): エラー内容
     - assignedTo (String): 担当者ID
     */
-    const inProgressTable = new cdk.aws_dynamodb.Table(this, props.inProgressTableName, {
-      partitionKey: { name: "errorId", type: cdk.aws_dynamodb.AttributeType.STRING },
-      billingMode: cdk.aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+    const inProgressTable = new dynamodb.Table(this, props.inProgressTableName, {
+      tableName: props.inProgressTableName,
+      partitionKey: { name: "errorId", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     // 担当者テーブル
@@ -82,10 +87,11 @@ export class AmazonConnect extends Construct {
     - phoneNumber (String): 電話番号
     - active (Boolean): アクティブ状態
     */
-    const respondersTable = new cdk.aws_dynamodb.Table(this, props.respondersTableName, {
-      partitionKey: { name: "responderId", type: cdk.aws_dynamodb.AttributeType.STRING },
-      sortKey: { name: "priority", type: cdk.aws_dynamodb.AttributeType.NUMBER },
-      billingMode: cdk.aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+    const respondersTable = new dynamodb.Table(this, props.respondersTableName, {
+      tableName: props.respondersTableName,
+      partitionKey: { name: "groupId", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "priority", type: dynamodb.AttributeType.NUMBER },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     // 架電履歴テーブル
@@ -99,11 +105,12 @@ export class AmazonConnect extends Construct {
     - result (String): "answered", "no_answer", "voicemail"等
     - expirationTime (Number): データ自動削除タイムスタンプ（TTL属性）
     */
-    const callHistoryTable = new cdk.aws_dynamodb.Table(this, props.callHistoryTableName, {
-      partitionKey: { name: "errorId", type: cdk.aws_dynamodb.AttributeType.STRING },
-      sortKey: { name: "timestamp", type: cdk.aws_dynamodb.AttributeType.NUMBER },
+    const callHistoryTable = new dynamodb.Table(this, props.callHistoryTableName, {
+      tableName: props.callHistoryTableName,
+      partitionKey: { name: "errorId", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "timestamp", type: dynamodb.AttributeType.NUMBER },
       timeToLiveAttribute: "expirationTime",
-      billingMode: cdk.aws_dynamodb.BillingMode.PAY_PER_REQUEST,
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
@@ -127,7 +134,7 @@ export class AmazonConnect extends Construct {
 
     connectFunctionRole.addToPolicy(
       new iam.PolicyStatement({
-        actions: ["dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:GetItem"],
+        actions: ["dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:GetItem","dynamodb:Scan"],
         resources: [
           callStatusTable.tableArn,
           inProgressTable.tableArn,
@@ -141,22 +148,18 @@ export class AmazonConnect extends Construct {
         actions: ["dynamodb:Query"],
         resources: [
             respondersTable.tableArn,
-            ],
-        conditions: {
-            StringEquals: {
-                "dynamodb:LeadingKeys": ["responderId"],
-            },
-        },
+        ],
       })
     );
     const logGroupName = `/aws/vendedlogs/lambda/${kebabCase(cdk.Stack.of(this).stackName)}/${kebabCase(props.outboundCallerLambdaName)}`;
+
     this.connectCallerLambda  = new PythonFunction(this, props.outboundCallerLambdaName, {
       runtime: lambda.Runtime.PYTHON_3_13,
       timeout: cdk.Duration.seconds(900),
-      entry: path.join(__dirname, '../../../common/src/lambda/connect-outbound-caller/python'),
+      entry: '../common/src/lambda/connect-outbound-caller/python',
       role: connectFunctionRole,
       index: "index.py",
-      handler: "index.lambda_handler",
+      handler: "lambda_handler",
       environment: {
         CALL_STATUS_TABLE: props.callStatusTableName,
         IN_PROGRESS_TABLE: props.inProgressTableName,
@@ -165,13 +168,19 @@ export class AmazonConnect extends Construct {
         CONNECT_INSTANCE_REGION_NAME: region,
         CONNECT_INSTANCE_ID: props.instanceId,
         CONNECT_CONTACT_FLOW_ID: props.contactFlowId,
-        CONNECT_SOURCE_PHONE: props.phoneSourceNumber,
+         // "-"があれば除去する。E164 format
+        CALLER_PHONE_NUMBER: props.phoneSourceNumber.replace(/-/g, ""),
         RESPONDERS_GROUP_ID: props.respondersGroupId ?? "default",
       },
       bundling: {
         platform: "linux/amd64",
+        bundlingFileAccess: cdk.BundlingFileAccess.VOLUME_COPY,
       },
       loggingFormat: lambda.LoggingFormat.JSON,
+      applicationLogLevelV2:
+        lambda.ApplicationLogLevel[
+          props.lambdaLogLevel as keyof typeof lambda.ApplicationLogLevel
+        ],
       logGroup: new logs.LogGroup(this, `${pascalCase(props.outboundCallerLambdaName)}LogGroup`, {
         logGroupName,
         removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -186,6 +195,9 @@ export class AmazonConnect extends Construct {
         sourceArn: props.snsTopic.topicArn,
       });
       props.snsTopic.grantPublish(connectFunctionRole);
+      props.snsTopic.addSubscription(new subs.LambdaSubscription(
+        this.connectCallerLambda
+      ));
     }
   }
 }
