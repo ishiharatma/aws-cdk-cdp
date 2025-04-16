@@ -3,5 +3,5 @@
   "compilerOptions": {
     "baseUrl": "./"
   },
-  "include": ["bin/**/*.ts", "lib/**/*.ts", "test/**/*.ts"]
+  "include": ["bin/**/*.ts", "lib/**/*.ts", "test/**/*.ts", "../cwl-subscription-filters-kinesis/lib/constructs/subscription-filter-kds.ts", "../cwl-subscription-filters-opensearch/lib/constructs/subscription-filter-opensearch.ts", "../cwl-subscription-filters-lambda/lib/constructs/subscription-filter-lambda.ts"]
 }

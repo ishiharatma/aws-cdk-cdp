@@ -1,0 +1,352 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "1a176505-20c9-4bc1-b390-7d3af8dd4c62",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": -36,
+      "y": 39.2
+    },
+    "ActionMetadata": {
+      "1a176505-20c9-4bc1-b390-7d3af8dd4c62": {
+        "position": {
+          "x": 68,
+          "y": 38.4
+        }
+      },
+      "0b78e6b6-dfdc-4765-942c-8c8980ed3e27": {
+        "position": {
+          "x": 87.2,
+          "y": 317.6
+        },
+        "overrideConsoleVoice": false
+      },
+      "Done": {
+        "position": {
+          "x": 1488,
+          "y": 47.2
+        },
+        "isFriendlyName": true
+      },
+      "5172ef33-376a-458e-af33-cdc659bab0cd": {
+        "position": {
+          "x": 945.6,
+          "y": 19.2
+        },
+        "dynamicParams": []
+      },
+      "bf005caf-acc9-42ab-8d43-3166e4b85838": {
+        "position": {
+          "x": 984.8,
+          "y": 263.2
+        },
+        "dynamicParams": []
+      },
+      "Next": {
+        "position": {
+          "x": 1650.4,
+          "y": 508
+        },
+        "isFriendlyName": true
+      },
+      "f32052dd-9a19-411a-8a2b-b7b0c703a577": {
+        "position": {
+          "x": 627.2,
+          "y": 157.6
+        },
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "ec986a30-9308-4950-9968-a26a55de9584",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "1"
+          },
+          {
+            "id": "b88cd8a7-94e8-4bb3-bf6d-6e927b18c0e6",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "2"
+          }
+        ]
+      },
+      "d023e088-e12c-48a9-808f-643cf7f1c72d": {
+        "position": {
+          "x": 1950.4,
+          "y": 413.6
+        }
+      },
+      "4f950b48-eb28-47ea-845c-50973d89f307": {
+        "position": {
+          "x": 363.2,
+          "y": 228.8
+        },
+        "conditionMetadata": [],
+        "countryCodePrefix": "+1"
+      },
+      "43f343e7-c1c2-46a7-89a5-655335ca5f1b": {
+        "position": {
+          "x": 1242.4,
+          "y": 508
+        },
+        "dynamicParams": []
+      },
+      "3857d571-1094-4a08-915d-28b172d3e5d7": {
+        "position": {
+          "x": 350.4,
+          "y": 636.8
+        }
+      },
+      "f4e8009f-1005-47d6-97ea-51e13894ad40": {
+        "position": {
+          "x": 732,
+          "y": 593.6
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "サンプル障害通知フロー",
+    "description": "",
+    "type": "contactFlow",
+    "status": "published",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "FlowLoggingBehavior": "Enabled"
+      },
+      "Identifier": "1a176505-20c9-4bc1-b390-7d3af8dd4c62",
+      "Type": "UpdateFlowLoggingBehavior",
+      "Transitions": {
+        "NextAction": "0b78e6b6-dfdc-4765-942c-8c8980ed3e27"
+      }
+    },
+    {
+      "Parameters": {
+        "TextToSpeechVoice": "Mizuki"
+      },
+      "Identifier": "0b78e6b6-dfdc-4765-942c-8c8980ed3e27",
+      "Type": "UpdateContactTextToSpeechVoice",
+      "Transitions": {
+        "NextAction": "4f950b48-eb28-47ea-845c-50973d89f307",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "対応開始を確認しました。"
+      },
+      "Identifier": "Done",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "callStatus": "answered_accepted"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "5172ef33-376a-458e-af33-cdc659bab0cd",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "Done",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "callStatus": "answered_declined"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "bf005caf-acc9-42ab-8d43-3166e4b85838",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "Next",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "次の担当者にお繋ぎします。"
+      },
+      "Identifier": "Next",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.StoredCustomerInput"
+      },
+      "Identifier": "f32052dd-9a19-411a-8a2b-b7b0c703a577",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "3857d571-1094-4a08-915d-28b172d3e5d7",
+        "Conditions": [
+          {
+            "NextAction": "5172ef33-376a-458e-af33-cdc659bab0cd",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "1"
+              ]
+            }
+          },
+          {
+            "NextAction": "bf005caf-acc9-42ab-8d43-3166e4b85838",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "2"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "3857d571-1094-4a08-915d-28b172d3e5d7",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+      "Type": "DisconnectParticipant",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "StoreInput": "True",
+        "InputTimeLimitSeconds": "5",
+        "Text": "障害が発生しました。対応する場合は1を、対応できない場合は2を押してください。",
+        "DTMFConfiguration": {
+          "DisableCancelKey": "False",
+          "InputTerminationSequence": "#",
+          "InterdigitTimeLimitSeconds": "5"
+        },
+        "InputValidation": {
+          "CustomValidation": {
+            "MaximumLength": "1"
+          }
+        }
+      },
+      "Identifier": "4f950b48-eb28-47ea-845c-50973d89f307",
+      "Type": "GetParticipantInput",
+      "Transitions": {
+        "NextAction": "f32052dd-9a19-411a-8a2b-b7b0c703a577",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          " callStatus": "no_answer"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "43f343e7-c1c2-46a7-89a5-655335ca5f1b",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "Next",
+        "Errors": [
+          {
+            "NextAction": "Next",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "入力が確認できませんでした。"
+      },
+      "Identifier": "3857d571-1094-4a08-915d-28b172d3e5d7",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "f4e8009f-1005-47d6-97ea-51e13894ad40",
+        "Errors": [
+          {
+            "NextAction": "d023e088-e12c-48a9-808f-643cf7f1c72d",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "LoopCount": "1"
+      },
+      "Identifier": "f4e8009f-1005-47d6-97ea-51e13894ad40",
+      "Type": "Loop",
+      "Transitions": {
+        "NextAction": "43f343e7-c1c2-46a7-89a5-655335ca5f1b",
+        "Conditions": [
+          {
+            "NextAction": "4f950b48-eb28-47ea-845c-50973d89f307",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "ContinueLooping"
+              ]
+            }
+          },
+          {
+            "NextAction": "43f343e7-c1c2-46a7-89a5-655335ca5f1b",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "DoneLooping"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

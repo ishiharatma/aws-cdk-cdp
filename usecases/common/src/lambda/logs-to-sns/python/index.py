@@ -107,9 +107,9 @@ def lambda_handler(event, context):
                         Message=message, #json.dumps(sns_message, ensure_ascii=False, indent=2)
                         MessageAttributes=sns_message_attributes,
                     )
-                    logger.info('message: %s', message)
-                    logger.info('sns_message_attributes: %s', sns_message_attributes)
-                    logger.info('Message published to SNS: %s', response['MessageId'])
+                    logger.debug('message: %s', message)
+                    logger.debug('sns_message_attributes: %s', sns_message_attributes)
+                    logger.debug('Message published to SNS: %s', response['MessageId'])
                 except Exception as e:
                     logger.error('Error publishing message to SNS: %s', str(e))
         

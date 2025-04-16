@@ -1,3 +1,7 @@
+# AWS Credentials
+
+.aws/
+
 # VSCode extension
 
 # Store launch config in repo but not settings
