@@ -46,6 +46,7 @@ export class BaseStack extends cdk.Stack {
         },
         topics: {
           critical: `test-critical-${cdk.Stack.of(this).stackName}`,
+          error: `test-error-${cdk.Stack.of(this).stackName}`,
         },
         envName: 'dev',
     });
@@ -54,7 +55,8 @@ export class BaseStack extends cdk.Stack {
     }
 
     this.subscriptionFilterLambda = new SubscriptionFilterLambda(this, "SubscriptionFilterLambda", {
-      snsTopicArn: this.opsSns.topics["critical"].topicArn,
+      subscriptionSNSTopicArn: this.opsSns.topics["critical"].topicArn,
+      alarmSNSTopicArn: this.opsSns.topics["error"].topicArn,
       lambdaLogLevel: params.lambda.lambdaLogLevel ?? "INFO",
     });
 

@@ -25,6 +25,12 @@ export class SubscriptionFilterFirehoseConstruct extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       logGroupName: '/aws/cwl-subscription-filters/firehose',
     });
+    const firehoseLogFailGroup = new logs.LogGroup(this, 'FirehoseFailLogGroup', {
+      retention: logs.RetentionDays.ONE_DAY,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      logGroupName: '/aws/cwl-subscription-filters/firehose-stream-fail-log',
+    });
+
 
     // 宛先S3バケット
     const s3Bucket = new s3.Bucket(this, 'CwlSubscriptionFiltersS3Bucket', {
@@ -59,7 +65,12 @@ export class SubscriptionFilterFirehoseConstruct extends Construct {
         bufferingInterval: cdk.Duration.seconds(60),
         bufferingSize: cdk.Size.mebibytes(1),
         compression: firehose.Compression.GZIP,
-        dataOutputPrefix: `AWSLogs/${accountId}/firehose/${region}/`
+        dataOutputPrefix: `AWSLogs/${accountId}/firehose/${region}/`,
+        loggingConfig: {
+          // S3バケットへの書き込みエラーをCloudWatch Logsに出力する
+          logging: true,
+          logGroup: firehoseLogFailGroup,
+        },
       }),
       role: firehoseRole,
     });
