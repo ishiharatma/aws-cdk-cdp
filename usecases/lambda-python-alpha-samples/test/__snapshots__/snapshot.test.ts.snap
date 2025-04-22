@@ -1,0 +1,479 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot 1`] = `
+{
+  "Description": "Lambda Python Alpha Samples Stack",
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "LambdaPythonAlphaSamplesDEBUG4A0E212B": {
+      "DependsOn": [
+        "LambdaPythonAlphaSamplesDEBUGServiceRoleDefaultPolicy6F15290E",
+        "LambdaPythonAlphaSamplesDEBUGServiceRole6BC491E8",
+        "LambdaPythonAlphaSamplesDEBUGLogGroup2236A40F",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "9483d39f3a0675406d784e96f564125d9b5c61a9e7535bd79538f0d116958a2d.zip",
+        },
+        "Description": "Lambda Python Alpha Samples DEBUG",
+        "Environment": {
+          "Variables": {
+            "MY_ENV_VAR": "my_value",
+            "MY_ENV_VAR2": "my_value2",
+          },
+        },
+        "FunctionName": "LambdaPythonAlphaSamplesDEBUG",
+        "Handler": "index.lambda_handler",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "DEBUG",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "LambdaPythonAlphaSamplesDEBUGLogGroup2236A40F",
+          },
+        },
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaPythonAlphaSamplesDEBUGServiceRole6BC491E8",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LambdaPythonAlphaSamplesDEBUGLogGroup2236A40F": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/LambdaPythonAlphaSamplesDEBUG",
+        "RetentionInDays": 1,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LambdaPythonAlphaSamplesDEBUGServiceRole6BC491E8": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LambdaPythonAlphaSamplesDEBUGServiceRoleDefaultPolicy6F15290E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LambdaPythonAlphaSamplesDEBUGServiceRoleDefaultPolicy6F15290E",
+        "Roles": [
+          {
+            "Ref": "LambdaPythonAlphaSamplesDEBUGServiceRole6BC491E8",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LambdaPythonAlphaSamplesERROR324F8EB6": {
+      "DependsOn": [
+        "LambdaPythonAlphaSamplesERRORServiceRoleDefaultPolicy97DCCDDD",
+        "LambdaPythonAlphaSamplesERRORServiceRoleADDC0E82",
+        "LambdaPythonAlphaSamplesERRORLogGroupB084BE42",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "9483d39f3a0675406d784e96f564125d9b5c61a9e7535bd79538f0d116958a2d.zip",
+        },
+        "Description": "Lambda Python Alpha Samples ERROR",
+        "Environment": {
+          "Variables": {
+            "MY_ENV_VAR": "my_value",
+            "MY_ENV_VAR2": "my_value2",
+          },
+        },
+        "FunctionName": "LambdaPythonAlphaSamplesERROR",
+        "Handler": "index.lambda_handler",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "ERROR",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "LambdaPythonAlphaSamplesERRORLogGroupB084BE42",
+          },
+        },
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaPythonAlphaSamplesERRORServiceRoleADDC0E82",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LambdaPythonAlphaSamplesERRORLogGroupB084BE42": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/LambdaPythonAlphaSamplesERROR",
+        "RetentionInDays": 1,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LambdaPythonAlphaSamplesERRORServiceRoleADDC0E82": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LambdaPythonAlphaSamplesERRORServiceRoleDefaultPolicy97DCCDDD": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LambdaPythonAlphaSamplesERRORServiceRoleDefaultPolicy97DCCDDD",
+        "Roles": [
+          {
+            "Ref": "LambdaPythonAlphaSamplesERRORServiceRoleADDC0E82",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LambdaPythonAlphaSamplesINFO33C182AD": {
+      "DependsOn": [
+        "LambdaPythonAlphaSamplesINFOServiceRoleDefaultPolicyEBA83756",
+        "LambdaPythonAlphaSamplesINFOServiceRole58DAE35B",
+        "LambdaPythonAlphaSamplesINFOLogGroup06D3E8AA",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "9483d39f3a0675406d784e96f564125d9b5c61a9e7535bd79538f0d116958a2d.zip",
+        },
+        "Description": "Lambda Python Alpha Samples INFO",
+        "Environment": {
+          "Variables": {
+            "MY_ENV_VAR": "my_value",
+            "MY_ENV_VAR2": "my_value2",
+          },
+        },
+        "FunctionName": "LambdaPythonAlphaSamplesINFO",
+        "Handler": "index.lambda_handler",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "INFO",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "LambdaPythonAlphaSamplesINFOLogGroup06D3E8AA",
+          },
+        },
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaPythonAlphaSamplesINFOServiceRole58DAE35B",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LambdaPythonAlphaSamplesINFOLogGroup06D3E8AA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/LambdaPythonAlphaSamplesINFO",
+        "RetentionInDays": 1,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LambdaPythonAlphaSamplesINFOServiceRole58DAE35B": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LambdaPythonAlphaSamplesINFOServiceRoleDefaultPolicyEBA83756": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LambdaPythonAlphaSamplesINFOServiceRoleDefaultPolicyEBA83756",
+        "Roles": [
+          {
+            "Ref": "LambdaPythonAlphaSamplesINFOServiceRole58DAE35B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LambdaPythonAlphaSamplesWARN675A151A": {
+      "DependsOn": [
+        "LambdaPythonAlphaSamplesWARNServiceRoleDefaultPolicy2A5F0E0E",
+        "LambdaPythonAlphaSamplesWARNServiceRole159CF76D",
+        "LambdaPythonAlphaSamplesWARNLogGroupAF95260A",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "9483d39f3a0675406d784e96f564125d9b5c61a9e7535bd79538f0d116958a2d.zip",
+        },
+        "Description": "Lambda Python Alpha Samples WARN",
+        "Environment": {
+          "Variables": {
+            "MY_ENV_VAR": "my_value",
+            "MY_ENV_VAR2": "my_value2",
+          },
+        },
+        "FunctionName": "LambdaPythonAlphaSamplesWARN",
+        "Handler": "index.lambda_handler",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "WARN",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "LambdaPythonAlphaSamplesWARNLogGroupAF95260A",
+          },
+        },
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaPythonAlphaSamplesWARNServiceRole159CF76D",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+        "TracingConfig": {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LambdaPythonAlphaSamplesWARNLogGroupAF95260A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/LambdaPythonAlphaSamplesWARN",
+        "RetentionInDays": 1,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LambdaPythonAlphaSamplesWARNServiceRole159CF76D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LambdaPythonAlphaSamplesWARNServiceRoleDefaultPolicy2A5F0E0E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LambdaPythonAlphaSamplesWARNServiceRoleDefaultPolicy2A5F0E0E",
+        "Roles": [
+          {
+            "Ref": "LambdaPythonAlphaSamplesWARNServiceRole159CF76D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
