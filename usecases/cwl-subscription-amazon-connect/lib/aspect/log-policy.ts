@@ -2,7 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as destinations from "aws-cdk-lib/aws-logs-destinations";
 import { IConstruct } from "constructs";
-import { SubscriptionFilterLambda } from "../constructs/subsription-filter-lambda";
+import { SubscriptionFilterLambda } from "../constructs/subscription-filter-lambda";
 
 export class LogPolicyAspect implements cdk.IAspect {
   constructor(

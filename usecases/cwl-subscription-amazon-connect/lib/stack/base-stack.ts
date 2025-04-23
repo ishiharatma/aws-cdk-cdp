@@ -4,7 +4,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { Lambda } from "../constructs/lambda";
 import { Sns } from "../constructs/sns";
-import { SubscriptionFilterLambda } from "../constructs/subsription-filter-lambda";
+import { SubscriptionFilterLambda } from "../constructs/subscription-filter-lambda";
 
 interface BaseStackProps extends cdk.StackProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
