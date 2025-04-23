@@ -14,7 +14,8 @@
 		"context": ".."
 	},
     "runArgs": [
-        "--privileged"
+        "--privileged",
+		"--init"
     ],
 	// Features pre-installed in your development environment:
 	"features": {
@@ -67,7 +68,7 @@
 		// Useful if using AWS SSO and want to share AWS config across environments
 		//"source=${localEnv:HOME}${localEnv:USERPROFILE}/.aws/,target=/home/vscode/.aws/,type=bind,consistency=cached"
 	    "source=./.aws/,target=/home/node/.aws/,type=bind,consistency=cached",
-		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+		//"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
 	],
 
 	// Recommended settings for the development environment
@@ -81,7 +82,6 @@
 			"extensions": [
 				// Python code linting and formatting
 				"charliermarsh.ruff",
-
 				// GitHub features:
 				// Authenticate to GitHub, manage pull requests and issues directly in VS Code
 				// https://github.com/microsoft/vscode-pull-request-github
@@ -90,21 +90,17 @@
 				// https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens
 				"eamodio.gitlens",
 				"donjayamanne.githistory",
-
 				// Additional features:
 				// AWS Toolkit
 				// Rich toolset for working with AWS services from within VS Code
 				// Allows exploring deployed services and using CodeWhisperer
 				"amazonwebservices.aws-toolkit-vscode",
 				"amazonwebservices.amazon-q-vscode",
-
 				// GitHub Copilot - AI-assisted code completion and generation
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-
 				// Japanese language pack, helpful if using a Japanese environment
 				//"ms-ceintl.vscode-language-pack-ja",
-
 				// Docker-related extensions
 				"ms-azuretools.vscode-docker",
 				// Devcontainer extension
@@ -115,7 +111,8 @@
 				// CSV visualization extension
 				"mechatroner.rainbow-csv",
 				// Text linting extension
-				"taichi.vscode-textlint",
+				//"taichi.vscode-textlint", // deprecated
+				"3w36zj6.textlint",
 				// Diagram creation extension
 				"hediet.vscode-drawio",
 				// Code formatting extensions
@@ -132,7 +129,9 @@
 					"source.fixAll.eslint": "explicit",
 					"source.fixAll.stylelint": "always"
 				},
-				"eslint.validate": ["typescript"],
+				"eslint.validate": [
+					"typescript"
+				],
 				"mcp": {
 					"inputs": [],
 					"servers": {
@@ -148,33 +147,57 @@
 						"github": {
 							"command": "docker",
 							"args": [
-							  "run",
-							  "-i",
-							  "--rm",
-							  "--network",
-							  "bridge",
-							  "-e",
-							  "GITHUB_PERSONAL_ACCESS_TOKEN",
-							  "mcp/github"
+								"run",
+								"-i",
+								"--rm",
+								"--network",
+								"bridge",
+								"-e",
+								"GITHUB_PERSONAL_ACCESS_TOKEN",
+								"mcp/github"
 							],
 							"env": {
-							  "GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_PERSONAL_ACCESS_TOKEN}"
+								"GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_PERSONAL_ACCESS_TOKEN}"
 							}
+						},
+						"awslabs.core-mcp-server": {
+						  "command": "uvx",
+						  "args": [
+							"awslabs.core-mcp-server@latest"
+						  ],
+						  "env": {
+							"FASTMCP_LOG_LEVEL": "ERROR"
 						  },
+						  "autoApprove": [],
+						  "disabled": false
+						},
 						"awslabs.cdk-mcp-server": {
 							"command": "uvx",
-							"args": ["awslabs.cdk-mcp-server@latest"],
+							"args": [
+								"awslabs.cdk-mcp-server@latest"
+							],
 							"env": {
-							"FASTMCP_LOG_LEVEL": "ERROR"
+								"FASTMCP_LOG_LEVEL": "ERROR"
 							},
 							"disabled": false,
-							"autoApprove": []
+							"autoApprove": [
+								"CDKGeneralGuidance",
+								"GetAwsSolutionsConstructPattern",
+								"SearchGenAICDKConstructs",
+								"GenerateBedrockAgentSchema",
+								"LambdaLayerDocumentationProvider",
+								"ExplainCDKNagRules",
+								"ExplainCDKPatterns",
+								"CheckCDKNagSuppressions"
+							]
 						},
 						"awslabs.aws-documentation-mcp-server": {
 							"command": "uvx",
-							"args": ["awslabs.aws-documentation-mcp-server@latest"],
+							"args": [
+								"awslabs.aws-documentation-mcp-server@latest"
+							],
 							"env": {
-							  "FASTMCP_LOG_LEVEL": "ERROR"
+								"FASTMCP_LOG_LEVEL": "ERROR"
 							},
 							"disabled": false,
 							"autoApprove": [
@@ -182,6 +205,15 @@
 								"search_documentation",
 								"recommend"
 							]
+						},
+						"awslabs.aws-diagram-mcp-server": {
+							"command": "uvx",
+							"args": ["awslabs.aws-diagram-mcp-server"],
+							"env": {
+							  "FASTMCP_LOG_LEVEL": "ERROR"
+							},
+							"autoApprove": [],
+							"disabled": false
 						}
 					}
 				}
